@@ -1,25 +1,60 @@
 <!DOCTYPE html>
-<html>
-<!-- This is the about page -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>the Food Depot</title>
   <link href="style.css" rel="stylesheet" type="text/css" media="all">
 </head>
-
 <body>
   <container>
     <header>
-      <button>order</button>
-      <button>brand ideology</button>
-      <button id="logo-button"><img src="imgs/logo.png"></button>
-      <button>physical resources</button>
-      <button>sign in/create an account</button>
+      <nav>
+        <button class="nav-btn">order</button>
+        <button class="nav-btn">brand ideology</button>
+        <button id="logo-button"><img src="imgs/logo.png" alt="logo"></button>
+        <button class="nav-btn">physical resources</button>
+        <button class="nav-btn">sign in/<br>create an account</button>
+      </nav>
     </header>
+
     <main>
+      <section class="carousel">
+        <div class="carousel-item featured">
+          <div class="photo-placeholder">moving photo</div>
+        </div>
+        <span class="arrow">→</span>
+        <div class="carousel-item">
+          <div class="photo-placeholder">photo</div>
+        </div>
+        <span class="arrow">→</span>
+        <div class="carousel-item">
+          <div class="photo-placeholder">photo</div>
+        </div>
+        <span class="arrow">→</span>
+        <div class="carousel-item">
+          <div class="photo-placeholder">photo</div>
+        </div>
+      </section>
+
+      <div class="founders-cta">
+        <button class="founders-btn">about our founders!</button>
+      </div>
+
+      <section class="founders">
+        <div class="founder-card">
+          <div class="founder-photo"></div>
+          <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        </div>
+        <div class="founder-card">
+          <div class="founder-photo"></div>
+          <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        </div>
+        <div class="founder-card">
+          <div class="founder-photo"></div>
+          <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+        </div>
+      </section>
     </main>
   </container>
 </body>
-
 </html>
