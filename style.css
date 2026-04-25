@@ -8,3 +8,7 @@
     background-color: transparent;
     max-width: 50px;
   }
+
+  #logo-button img {
+    width: 50px;
+  }
