@@ -1,32 +1,27 @@
-/*:root {
-  --mainbg: ;
-  --headerbg: ;
-  --buttons: ;
-  }
-*/
- *, *::before, *::after {
+
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
- 
+
 body {
   font-family: Georgia, serif;
   background: #fff;
   color: #222;
 }
- 
+
 container {
   display: block;
   width: 100%;
 }
- 
+
 header {
   background: #e8e8e8;
   width: 100%;
   border-bottom: 1px solid #ccc;
 }
- 
+
 nav {
   display: flex;
   align-items: center;
@@ -35,7 +30,7 @@ nav {
   padding: 0 16px;
   min-height: 64px;
 }
- 
+
 .nav-btn {
   background: transparent;
   border: none;
@@ -48,11 +43,11 @@ nav {
   line-height: 1.3;
   flex: 1;
 }
- 
+
 .nav-btn:hover {
   text-decoration: underline;
 }
- 
+
 #logo-button {
   background-color: transparent;
   border: none;
@@ -63,26 +58,26 @@ nav {
   align-items: center;
   padding: 8px;
 }
- 
+
 #logo-button img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  background: #999; 
+  background: #999;
   display: block;
 }
- 
+
 #logo-button img[src="imgs/logo.png"] {
   background: #aaa;
 }
- 
+
 main {
   padding: 32px 24px;
   max-width: 1200px;
   margin: 0 auto;
 }
- 
+
 .carousel {
   display: flex;
   align-items: center;
@@ -90,11 +85,11 @@ main {
   width: 100%;
   margin-bottom: 32px;
 }
- 
+
 .carousel-item {
   flex: 1;
 }
- 
+
 .photo-placeholder {
   background: #b0b0b0;
   width: 100%;
@@ -106,12 +101,11 @@ main {
   color: #444;
   border-radius: 2px;
 }
- 
+
 .carousel-item.featured .photo-placeholder {
-  /* slightly taller to match wireframe's left card look */
   aspect-ratio: 4 / 3;
 }
- 
+
 .arrow {
   font-size: 1.6rem;
   color: #444;
@@ -119,13 +113,13 @@ main {
   flex-shrink: 0;
   line-height: 1;
 }
- 
+
 .founders-cta {
   display: flex;
   justify-content: center;
   margin-bottom: 40px;
 }
- 
+
 .founders-btn {
   background: #888;
   border: none;
@@ -138,17 +132,17 @@ main {
   letter-spacing: 0.01em;
   transition: background 0.2s;
 }
- 
+
 .founders-btn:hover {
   background: #666;
 }
- 
+
 .founders {
   display: flex;
   gap: 40px;
   align-items: flex-start;
 }
- 
+
 .founder-card {
   flex: 1;
   display: flex;
@@ -157,7 +151,7 @@ main {
   gap: 20px;
   text-align: center;
 }
- 
+
 .founder-photo {
   width: 140px;
   height: 140px;
@@ -165,29 +159,29 @@ main {
   background: #aaa;
   flex-shrink: 0;
 }
- 
+
 .founder-card p {
   font-size: 0.85rem;
   line-height: 1.65;
   color: #333;
   text-align: center;
 }
- 
+
 @media (max-width: 768px) {
   .carousel {
     flex-direction: column;
   }
- 
+
   .arrow {
     transform: rotate(90deg);
     padding: 8px 0;
   }
- 
+
   .founders {
     flex-direction: column;
     align-items: center;
   }
- 
+
   nav {
     flex-wrap: wrap;
     justify-content: center;
