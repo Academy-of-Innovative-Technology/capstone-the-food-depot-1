@@ -4,7 +4,7 @@
   --buttons: ;
   }
 */
-  .logo-button {
+  #logo-button {
     background-color: transparent;
     max-width: 50px;
   }
