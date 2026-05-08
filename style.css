@@ -127,10 +127,6 @@ main {
   transition: background 0.2s;
 }
 
-.founders-btn:hover {
-  background: var(--photoPlaceholderHover);
-}
-
 .founders {
   display: flex;
   gap: 40px;
@@ -152,7 +148,6 @@ main {
   background-color: var(--buttonColor);
   padding: 50px;
   margin: 20px;
-
 }
 
 .founder-photo {
@@ -163,11 +158,6 @@ main {
   flex-shrink: 0;
 }
 
-.founder-card p {
-  font-size: 0.85rem;
-  line-height: 1.65;
-  text-align: center;
-}
 
 @media (max-width: 768px) {
   .carousel {
