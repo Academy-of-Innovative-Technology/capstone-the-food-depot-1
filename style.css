@@ -80,21 +80,20 @@ main {
   max-width: 1200px;
   margin: 0 auto;
 }
-
-.carousel {
+.carousel ul {
+  list-style: none;
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
   width: 100%;
   margin-bottom: 32px;
 }
-
 .carousel-item {
   flex: 1;
 }
 
 .photo-placeholder {
-  background: var(--photoPlaceholder);
   width: 100%;
   aspect-ratio: 4 / 3;
   display: flex;
@@ -150,7 +149,7 @@ main {
   margin: 20px;
 }
 
-.founder-photo {
+.founder-photo img{
   width: 140px;
   height: 140px;
   border-radius: 50%;
@@ -159,7 +158,7 @@ main {
 }
 
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
   .carousel {
     flex-direction: column;
   }
@@ -180,4 +179,4 @@ main {
     gap: 4px;
     padding: 10px;
   }
-}
+} */
