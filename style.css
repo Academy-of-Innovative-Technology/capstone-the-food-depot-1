@@ -144,8 +144,8 @@ main {
   gap: 20px;
   text-align: center;
 }
-.founders :hover {
-  width: 80px;
+
+.founder-card:hover {
   border: 15px var(--buttonColor) solid;
   border-radius: 10px;
   background-color: var(--buttonColor);
@@ -184,3 +184,5 @@ main {
     padding: 10px;
   }
 } 
+
+
