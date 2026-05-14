@@ -17,7 +17,6 @@ container {
 }
 
 header {
-  background: var(--headerbg);
   width: 100%;
 }
 
@@ -25,8 +24,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  padding: 0 16px;
+  width: 95%;
   min-height: 64px;
 }
 
@@ -44,11 +42,12 @@ nav {
 
 .nav-btn:hover {
   background-color: var(--buttonColor);
-  border: 1px solid var(--buttonColor);
   border-radius: 10px;
   color: var(--hoverColor);
   padding: 5px;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
+
 
 #logo-button {
   background-color: transparent;
@@ -62,22 +61,22 @@ nav {
 }
 
 #logo-button img {
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
 }
 
 #logo-button img:hover{
-  width: 100px;
-  height: 100px;
-  transition: background-color 0.3s ease, transform 0.3s ease
+  width: 150px;
+  height: 150px;
+  transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 main {
   padding: 32px 24px;
-  max-width: 1200px;
+  width: 95%;
   margin: 0 auto;
 }
 .carousel {
@@ -91,7 +90,6 @@ main {
   gap: 10px;
   width: 100%;
   margin-bottom: 32px;
-  transition: transform 0.5s ease-in-out
 }
 .carousel-item {
   flex: 1;
@@ -127,7 +125,6 @@ main {
   color: #fff;
   cursor: pointer;
   letter-spacing: 0.01em;
-  transition: background 0.2s;
 }
 
 .founders {
@@ -146,11 +143,11 @@ main {
 }
 
 .founder-card:hover {
-  border: 15px var(--buttonColor) solid;
   border-radius: 10px;
   background-color: var(--buttonColor);
-  padding: 50px;
+  padding: 80px;
   margin: 20px;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .founder-photo img{
@@ -165,11 +162,6 @@ main {
 @media (max-width: 768px) {
   .carousel {
     flex-direction: column;
-  }
-
-  .arrow {
-    transform: rotate(90deg);
-    padding: 8px 0;
   }
 
   .founders {
