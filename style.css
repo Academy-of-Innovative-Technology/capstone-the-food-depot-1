@@ -162,7 +162,7 @@ main {
 }
 
 
-/*@media (max-width: 768px) {
+@media (max-width: 768px) {
   .carousel {
     flex-direction: column;
   }
@@ -183,4 +183,4 @@ main {
     gap: 4px;
     padding: 10px;
   }
-} */
+} 
