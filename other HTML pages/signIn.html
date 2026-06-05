@@ -207,7 +207,7 @@
   <script>
     function submitForm() {
 
-  
+
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const number = document.getElementById("number").value.trim();
@@ -299,6 +299,11 @@
       --cardBg: #d5e597;
     }
 
+    @font-face {
+      font-family: "KiwiSoda";
+      src: url(KiwiSoda.ttf);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -307,8 +312,8 @@
 
     body {
       background: var(--bodyBg);
-      font-family: Arial, sans-serif;
-      color: #333;
+      font-family: KiwiSoda, Arial, Helvetica, sans-serif;
+      color: var(--color);
     }
 
     .container {
