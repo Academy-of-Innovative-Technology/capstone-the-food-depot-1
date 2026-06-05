@@ -207,17 +207,41 @@
   <script>
     function submitForm() {
 
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const number = document.getElementById("number").value;
-      const feedback = document.getElementById("feedback").value;
+  
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const number = document.getElementById("number").value.trim();
+      const feedback = document.getElementById("feedback").value.trim();
 
       const selectedRating =
         document.querySelector('input[name="rating"]:checked');
 
-      const rating = selectedRating
-        ? selectedRating.value
-        : "No Rating";
+      const rating = selectedRating ? selectedRating.value : "";
+
+      let valid = true;
+
+      document.querySelectorAll(".field-error")
+        .forEach(error => error.classList.remove("show"));
+
+      if (name === "") {
+        document.getElementById("nameError").classList.add("show");
+        valid = false;
+      }
+
+      if (email === "") {
+        document.getElementById("emailError").classList.add("show");
+        valid = false;
+      }
+
+      if (number === "") {
+        document.getElementById("numberError").classList.add("show");
+        valid = false;
+      }
+
+      if (!valid) {
+        return;
+      }
+
 
       const feedbackData = {
         name: name,
@@ -228,51 +252,34 @@
         date: new Date().toLocaleString()
       };
 
+      let allFeedback =
+        JSON.parse(localStorage.getItem("foodDepotFeedback")) || [];
+
+      allFeedback.push(feedbackData);
+
       localStorage.setItem(
         "foodDepotFeedback",
-        JSON.stringify(feedbackData)
+        JSON.stringify(allFeedback)
       );
 
-      showToast("Feedback Saved!");
+      showToast("Feedback Submitted!");
 
-      console.log(feedbackData);
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("number").value = "";
+      document.getElementById("feedback").value = "";
+
+      document
+        .querySelectorAll('input[name="rating"]')
+        .forEach(radio => {
+          radio.checked = false;
+        });
     }
-    window.onload = function () {
 
-      const savedData =
-        localStorage.getItem("foodDepotFeedback");
 
-      if (!savedData) return;
-
-      const data = JSON.parse(savedData);
-
-      document.getElementById("name").value =
-        data.name || "";
-
-      document.getElementById("email").value =
-        data.email || "";
-
-      document.getElementById("number").value =
-        data.phone || "";
-
-      document.getElementById("feedback").value =
-        data.feedback || "";
-
-      if (data.rating !== "No Rating") {
-
-        const star = document.querySelector(
-          `input[name="rating"][value="${data.rating}"]`
-        );
-
-        if (star) {
-          star.checked = true;
-        }
-      }
-    };
     function showToast(message) {
 
-      const toast =
-        document.getElementById("toast");
+      const toast = document.getElementById("toast");
 
       toast.textContent = message;
 
@@ -282,17 +289,6 @@
         toast.classList.remove("show");
       }, 3000);
     }
-    let allFeedback =
-      JSON.parse(
-        localStorage.getItem("foodDepotFeedback")
-      ) || [];
-
-    allFeedback.push(feedbackData);
-
-    localStorage.setItem(
-      "foodDepotFeedback",
-      JSON.stringify(allFeedback)
-    );
   </script>
   <style>
     :root {
