@@ -355,9 +355,14 @@
       color: var(--hoverColor);
     }
 
-    .logo-link {
-      display: flex;
-      justify-content: center;
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .logo-link img {
@@ -365,11 +370,12 @@
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      transition: .3s;
+      transition: transform 0.3s ease;
+      animation: spin 2s linear infinite;
     }
 
     .logo-link img:hover {
-      transform: scale(1.1);
+      animation-play-state: paused;
     }
 
 

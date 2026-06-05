@@ -275,24 +275,28 @@
             color: var(--hoverColor);
         }
 
-        .logo-link {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .logo-link img {
             width: 120px;
             height: 120px;
-            object-fit: cover;
             border-radius: 50%;
-            transition: 0.3s ease;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            animation: spin 2s linear infinite;
         }
 
         .logo-link img:hover {
-            transform: scale(1.08);
+            animation-play-state: paused;
         }
-
 
         main {
             font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
@@ -470,7 +474,8 @@
             <section class="story-grid">
 
                 <div class="text-card">
-                    <p>As a brand, the food depot represents accessibility. We intent to accomodate busy schedules and help those who may not always have the time and energy to wait hours in line at food banks.</p>
+                    <p>As a brand, the food depot represents accessibility. We intent to accomodate busy schedules and
+                        help those who may not always have the time and energy to wait hours in line at food banks.</p>
                 </div>
 
                 <div class="column">

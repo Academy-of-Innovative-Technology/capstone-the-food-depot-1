@@ -12,6 +12,7 @@
   font-family: "KiwiSoda";
   src: url(fonts/KiwiSoda.ttf);
 }
+
 @font-face {
   font-family: "lovelyBubbles";
   src: url(fonts/lovelyBubbles.ttf);
@@ -70,16 +71,27 @@ nav {
   align-items: center;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .logo-link img {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  animation: spin 2s linear infinite;
 }
 
 .logo-link img:hover {
-  transform: scale(1.1);
+  animation-play-state: paused;
 }
 
 main {
