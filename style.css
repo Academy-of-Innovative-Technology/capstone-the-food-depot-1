@@ -10,7 +10,11 @@
 
 @font-face {
   font-family: "KiwiSoda";
-  src: url(KiwiSoda.ttf);
+  src: url(fonts/KiwiSoda.ttf);
+}
+@font-face {
+  font-family: "lovelyBubbles";
+  src: url(fonts/lovelyBubbles.ttf);
 }
 
 * {
@@ -136,6 +140,7 @@ main {
 }
 
 .founders-btn {
+  font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
   background-color: var(--buttonColor);
   color: var(--color);
 
@@ -155,6 +160,7 @@ main {
 
 
 .founders {
+  font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
   display: flex;
   justify-content: center;
   gap: 30px;
