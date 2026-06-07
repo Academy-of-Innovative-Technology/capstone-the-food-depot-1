@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="style.css">
   <script type="text/javascript">
     // <![CDATA[
-    var colours = new Array("#a6f", "#60f", "#60f", "#a6f", "#ccc"); // colours for top, right, bottom and left borders and background of bubbles
-    var bubbles = 200; // maximum number of bubbles on screen
-    var over_or_under = "over"; // set to "over" for bubbles to always be on top, or "under" to allow them to float behind other objects
+    var colours = new Array("#a6f", "#60f", "#60f", "#a6f", "#ccc");
+    var bubbles = 200;
+    var over_or_under = "over";
 
     /****************************
     * JavaScript Bubble Cursor  *
@@ -65,7 +65,7 @@
           div.top = "0px";
           div.left = "1px";
           div.right = "1px";
-          div.bottom = "0px"
+          div.bottom = "0px";
           div.borderTop = "1px solid " + colours[0];
           div.borderBottom = "1px solid " + colours[2];
 
@@ -97,7 +97,7 @@
           bubb[c].left = (bubbx[c] = x) + "px";
           bubb[c].top = (bubby[c] = y - 3) + "px";
           bubb[c].width = "3px";
-          bubb[c].height = "3px"
+          bubb[c].height = "3px";
           bubb[c].visibility = "visible";
           bubbs[c] = 3;
           break;
@@ -201,27 +201,22 @@
       div.style.overflow = "hidden";
       div.style.backgroundColor = "transparent";
       return (div);
-    } v
+    }
     // ]]>
   </script>
   <script>
     function submitForm() {
-
-
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const number = document.getElementById("number").value.trim();
       const feedback = document.getElementById("feedback").value.trim();
 
-      const selectedRating =
-        document.querySelector('input[name="rating"]:checked');
-
+      const selectedRating = document.querySelector('input[name="rating"]:checked');
       const rating = selectedRating ? selectedRating.value : "";
 
       let valid = true;
 
-      document.querySelectorAll(".field-error")
-        .forEach(error => error.classList.remove("show"));
+      document.querySelectorAll(".field-error").forEach(error => error.classList.remove("show"));
 
       if (name === "") {
         document.getElementById("nameError").classList.add("show");
@@ -238,10 +233,7 @@
         valid = false;
       }
 
-      if (!valid) {
-        return;
-      }
-
+      if (!valid) return;
 
       const feedbackData = {
         name: name,
@@ -252,39 +244,36 @@
         date: new Date().toLocaleString()
       };
 
-      let allFeedback =
-        JSON.parse(localStorage.getItem("foodDepotFeedback")) || [];
+      // Safe localStorage save with error handling
+      try {
+        let allFeedback = [];
+        const existing = localStorage.getItem("foodDepotFeedback");
+        if (existing) {
+          const parsed = JSON.parse(existing);
+          allFeedback = Array.isArray(parsed) ? parsed : [];
+        }
+        allFeedback.push(feedbackData);
+        localStorage.setItem("foodDepotFeedback", JSON.stringify(allFeedback));
+      } catch (err) {
+        console.warn("Could not save to localStorage:", err);
+      }
 
-      allFeedback.push(feedbackData);
+      showToast("✓ Feedback Submitted!");
 
-      localStorage.setItem(
-        "foodDepotFeedback",
-        JSON.stringify(allFeedback)
-      );
-
-      showToast("Feedback Submitted!");
-
+      // Reset form
       document.getElementById("name").value = "";
       document.getElementById("email").value = "";
       document.getElementById("number").value = "";
       document.getElementById("feedback").value = "";
-
-      document
-        .querySelectorAll('input[name="rating"]')
-        .forEach(radio => {
-          radio.checked = false;
-        });
+      document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        radio.checked = false;
+      });
     }
 
-
     function showToast(message) {
-
       const toast = document.getElementById("toast");
-
       toast.textContent = message;
-
       toast.classList.add("show");
-
       setTimeout(() => {
         toast.classList.remove("show");
       }, 3000);
@@ -328,8 +317,6 @@
       margin: 0 auto;
     }
 
-
-
     header {
       padding: 20px 0;
     }
@@ -356,13 +343,8 @@
     }
 
     @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .logo-link img {
@@ -377,8 +359,6 @@
     .logo-link img:hover {
       animation-play-state: paused;
     }
-
-
 
     .page-title {
       font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
@@ -396,7 +376,6 @@
       margin-top: 10px;
     }
 
-
     .form-section {
       font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
       display: flex;
@@ -407,13 +386,9 @@
     .card {
       width: 100%;
       max-width: 700px;
-
       background: var(--cardBg);
-
       padding: 40px;
-
       border-radius: 20px;
-
       box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
     }
 
@@ -432,10 +407,8 @@
     textarea {
       width: 100%;
       padding: 12px;
-
       border: 2px solid var(--buttonColor);
       border-radius: 10px;
-
       font-size: 1rem;
     }
 
@@ -461,7 +434,6 @@
       display: block;
     }
 
-
     .stars {
       display: flex;
       flex-direction: row-reverse;
@@ -484,21 +456,15 @@
       color: gold;
     }
 
-
     .btn {
       width: 100%;
-
       padding: 15px;
-
       border: none;
       border-radius: 10px;
-
       background: var(--buttonColor);
       color: var(--color);
-
       font-weight: bold;
       cursor: pointer;
-
       transition: .3s;
     }
 
@@ -507,41 +473,56 @@
       color: white;
     }
 
-
     .divider {
       margin: 25px 0;
       border: none;
       border-top: 2px solid rgba(0, 0, 0, .1);
     }
 
-    /* TOAST */
-
+    /* ── TOAST ── */
     .toast {
       position: fixed;
-
-      bottom: 20px;
+      bottom: 32px;
       left: 50%;
+      transform: translateX(-50%) translateY(20px);
 
-      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
       background: var(--hoverColor);
-      color: white;
+      color: #fdf8e1;
 
-      padding: 12px 24px;
+      font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
 
-      border-radius: 30px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.25);
+
+      box-shadow:
+        0 8px 24px rgba(106, 121, 52, 0.45),
+        0 2px 6px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.2);
 
       opacity: 0;
-      transition: .3s;
+      pointer-events: none;
+
+      transition:
+        opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      white-space: nowrap;
+      z-index: 9999;
     }
 
     .toast.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-
     @media (max-width: 768px) {
-
       nav {
         display: flex;
         flex-direction: column;
@@ -564,114 +545,76 @@
 
     <header>
       <nav>
-
-        <a href="../other HTML pages/order.html" class="nav-btn">
-          Order
-        </a>
-
-        <a href="../other HTML pages/ideology.html" class="nav-btn">
-          Brand Ideology
-        </a>
-
+        <a href="../other HTML pages/order.html" class="nav-btn">Order</a>
+        <a href="../other HTML pages/ideology.html" class="nav-btn">Brand Ideology</a>
         <a href="../index.html" class="logo-link">
           <img src="../imgs/logo.png" alt="The Food Depot Logo">
         </a>
-
-        <a href="../other HTML pages/map.html" class="nav-btn">
-          Physical Resources
-        </a>
-
-        <a href="../other HTML pages/signIn.html" class="nav-btn">
-          Sign In / Create Account
-        </a>
-
+        <a href="../other HTML pages/map.html" class="nav-btn">Physical Resources</a>
+        <a href="../other HTML pages/signIn.html" class="nav-btn">Sign In / Create Account</a>
       </nav>
     </header>
 
     <main>
 
       <section class="page-title">
-        <h1>Feedback Form</h1>
-        <p>
-          Help us improve The Food Depot by sharing your experience.
-        </p>
+        <h1>Sign in</h1>
+        <p>Sign in and leave your feedback!</p>
       </section>
 
       <section class="form-section">
-
         <div class="card">
 
           <div class="field">
             <label for="name">Name</label>
             <input type="text" id="name" placeholder="Your Name">
-            <div class="field-error" id="nameError">
-              Please enter your name.
-            </div>
+            <div class="field-error" id="nameError">Please enter your name.</div>
           </div>
 
           <div class="field">
             <label for="email">Email</label>
             <input type="email" id="email" placeholder="yourname@example.com">
-            <div class="field-error" id="emailError">
-              Please enter a valid email.
-            </div>
+            <div class="field-error" id="emailError">Please enter a valid email.</div>
           </div>
 
           <div class="field">
             <label for="number">Phone Number</label>
             <input type="tel" id="number" placeholder="(123) 456-7890">
-            <div class="field-error" id="numberError">
-              Please enter a phone number.
-            </div>
+            <div class="field-error" id="numberError">Please enter a phone number.</div>
           </div>
 
           <hr class="divider">
 
           <div class="field">
             <label>Rate Your Experience</label>
-
             <div class="stars">
-
               <input type="radio" id="s5" name="rating" value="5">
               <label for="s5">★</label>
-
               <input type="radio" id="s4" name="rating" value="4">
               <label for="s4">★</label>
-
               <input type="radio" id="s3" name="rating" value="3">
               <label for="s3">★</label>
-
               <input type="radio" id="s2" name="rating" value="2">
               <label for="s2">★</label>
-
               <input type="radio" id="s1" name="rating" value="1">
               <label for="s1">★</label>
-
             </div>
           </div>
 
           <div class="field">
-            <label for="feedback">
-              Additional Feedback
-            </label>
-
+            <label for="feedback">Additional Feedback</label>
             <textarea id="feedback" placeholder="Tell us about your experience..."></textarea>
           </div>
 
-          <button class="btn" onclick="submitForm()">
-            Submit Feedback
-          </button>
+          <button class="btn" onclick="submitForm()">Submit Feedback</button>
 
         </div>
-
       </section>
 
     </main>
-
   </div>
 
   <div class="toast" id="toast"></div>
 
 </body>
-
 </html>
