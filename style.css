@@ -4,7 +4,8 @@
   --hoverColor: #6a7934;
   --founderCardColor: #8a4572;
   --buttonColor: #e2e4d7;
-  --cardBg: #d5e597;
+  --founderButtonColor: #efb7bf;
+  --cardBg: #cee1ff;
 
 }
 
@@ -153,13 +154,14 @@ main {
 
 .founders-btn {
   font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
-  background-color: var(--buttonColor);
+  background-color: var( --founderButtonColor);
   color: var(--color);
 
   border: none;
   border-radius: 50px;
 
-  padding: 15px 40px;
+  padding: 30px 40px;
+  font-size: large;
 
   cursor: pointer;
   transition: 0.3s ease;
