@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Food Depot</title>
+    <script type="text/javascript">
+        // <![CDATA[
+        var colours = new Array("#a6f", "#60f", "#60f", "#a6f", "#ccc"); // colours for top, right, bottom and left borders and background of bubbles
+        var bubbles = 200; // maximum number of bubbles on screen
+        var over_or_under = "over"; // set to "over" for bubbles to always be on top, or "under" to allow them to float behind other objects
+
+        /****************************
+        * JavaScript Bubble Cursor  *
+        *(c)2010-13 mf2fm web-design*
+        *  http://www.mf2fm.com/rv  *
+        * DON'T EDIT BELOW THIS BOX *
+        ****************************/
+        var x = ox = 400;
+        var y = oy = 300;
+        var swide = 800;
+        var shigh = 600;
+        var sleft = sdown = 0;
+        var bubb = new Array();
+        var bubbx = new Array();
+        var bubby = new Array();
+        var bubbs = new Array();
+        var sploosh = false;
+
+        function addLoadEvent(funky) {
+            var oldonload = window.onload;
+            if (typeof (oldonload) != 'function') window.onload = funky;
+            else window.onload = function () {
+                if (oldonload) oldonload();
+                funky();
+            }
+        }
+
+        addLoadEvent(buble);
+
+        function buble() {
+            if (document.getElementById) {
+                var i, rats, div;
+                for (i = 0; i < bubbles; i++) {
+                    rats = createDiv("3px", "3px");
+                    rats.style.visibility = "hidden";
+                    rats.style.zIndex = (over_or_under == "over") ? "1001" : "0";
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.top = "1px";
+                    div.left = "0px";
+                    div.bottom = "1px";
+                    div.right = "0px";
+                    div.borderLeft = "1px solid " + colours[3];
+                    div.borderRight = "1px solid " + colours[1];
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.top = "0px";
+                    div.left = "1px";
+                    div.right = "1px";
+                    div.bottom = "0px"
+                    div.borderTop = "1px solid " + colours[0];
+                    div.borderBottom = "1px solid " + colours[2];
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.left = "1px";
+                    div.right = "1px";
+                    div.bottom = "1px";
+                    div.top = "1px";
+                    div.backgroundColor = colours[4];
+                    if (navigator.appName == "Microsoft Internet Explorer") div.filter = "alpha(opacity=50)";
+                    else div.opacity = 0.5;
+                    document.body.appendChild(rats);
+                    bubb[i] = rats.style;
+                }
+                set_scroll();
+                set_width();
+                bubble();
+            }
+        }
+
+        function bubble() {
+            var c;
+            if (Math.abs(x - ox) > 1 || Math.abs(y - oy) > 1) {
+                ox = x;
+                oy = y;
+                for (c = 0; c < bubbles; c++) if (!bubby[c]) {
+                    bubb[c].left = (bubbx[c] = x) + "px";
+                    bubb[c].top = (bubby[c] = y - 3) + "px";
+                    bubb[c].width = "3px";
+                    bubb[c].height = "3px"
+                    bubb[c].visibility = "visible";
+                    bubbs[c] = 3;
+                    break;
+                }
+            }
+            for (c = 0; c < bubbles; c++) if (bubby[c]) update_bubb(c);
+            setTimeout("bubble()", 40);
+        }
+
+        document.onmousedown = splash;
+        document.onmouseup = function () { clearTimeout(sploosh); };
+
+        function splash() {
+            ox = -1;
+            oy = -1;
+            sploosh = setTimeout('splash()', 100);
+        }
+
+        function update_bubb(i) {
+            if (bubby[i]) {
+                bubby[i] -= bubbs[i] / 2 + i % 2;
+                bubbx[i] += (i % 5 - 2) / 5;
+                if (bubby[i] > sdown && bubbx[i] > sleft && bubbx[i] < sleft + swide + bubbs[i]) {
+                    if (Math.random() < bubbs[i] / shigh * 2 && bubbs[i]++ < 8) {
+                        bubb[i].width = bubbs[i] + "px";
+                        bubb[i].height = bubbs[i] + "px";
+                    }
+                    bubb[i].top = bubby[i] + "px";
+                    bubb[i].left = bubbx[i] + "px";
+                }
+                else {
+                    bubb[i].visibility = "hidden";
+                    bubby[i] = 0;
+                    return;
+                }
+            }
+        }
+
+        document.onmousemove = mouse;
+        function mouse(e) {
+            if (e) {
+                y = e.pageY;
+                x = e.pageX;
+            }
+            else {
+                set_scroll();
+                y = event.y + sdown;
+                x = event.x + sleft;
+            }
+        }
+
+        window.onresize = set_width;
+        function set_width() {
+            var sw_min = 999999;
+            var sh_min = 999999;
+            if (document.documentElement && document.documentElement.clientWidth) {
+                if (document.documentElement.clientWidth > 0) sw_min = document.documentElement.clientWidth;
+                if (document.documentElement.clientHeight > 0) sh_min = document.documentElement.clientHeight;
+            }
+            if (typeof (self.innerWidth) == 'number' && self.innerWidth) {
+                if (self.innerWidth > 0 && self.innerWidth < sw_min) sw_min = self.innerWidth;
+                if (self.innerHeight > 0 && self.innerHeight < sh_min) sh_min = self.innerHeight;
+            }
+            if (document.body.clientWidth) {
+                if (document.body.clientWidth > 0 && document.body.clientWidth < sw_min) sw_min = document.body.clientWidth;
+                if (document.body.clientHeight > 0 && document.body.clientHeight < sh_min) sh_min = document.body.clientHeight;
+            }
+            if (sw_min == 999999 || sh_min == 999999) {
+                sw_min = 800;
+                sh_min = 600;
+            }
+            swide = sw_min;
+            shigh = sh_min;
+        }
+
+        window.onscroll = set_scroll;
+        function set_scroll() {
+            if (typeof (self.pageYOffset) == 'number') {
+                sdown = self.pageYOffset;
+                sleft = self.pageXOffset;
+            }
+            else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+                sdown = document.body.scrollTop;
+                sleft = document.body.scrollLeft;
+            }
+            else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+                sleft = document.documentElement.scrollLeft;
+                sdown = document.documentElement.scrollTop;
+            }
+            else {
+                sdown = 0;
+                sleft = 0;
+            }
+        }
+
+        function createDiv(height, width) {
+            var div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.height = height;
+            div.style.width = width;
+            div.style.overflow = "hidden";
+            div.style.backgroundColor = "transparent";
+            return (div);
+        }
+        // ]]>
+    </script>
+    <link rel="icon" href="imgs/logo.png">
+    <link rel="stylesheet" href="map.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js"></script>
+    <style>
+        :root {
+            --bodyBg: #fdf8e1;
+            --color: #aa1111;
+            --hoverColor: #6a7934;
+            --founderCardColor: #8a4572;
+            --buttonColor: #e2e4d7;
+            --cardBg: #d5e597;
+        }
+
+        @font-face {
+            font-family: "KiwiSoda";
+            src: url(../fonts/KiwiSoda.ttf);
+        }
+
+        @font-face {
+            font-family: "lovelyBubbles";
+            src: url(../fonts/lovelyBubbles.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: KiwiSoda, Arial, Helvetica, sans-serif;
+            background-color: var(--bodyBg);
+            color: var(--color);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 20px 0;
+        }
+
+        nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto 1fr 1fr;
+            align-items: center;
+            gap: 20px;
+            font-size: xx-large;
+        }
+
+
+        .nav-btn {
+            text-decoration: none;
+            color: var(--color);
+            text-align: center;
+
+            padding: 12px;
+            border-radius: 10px;
+
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--buttonColor);
+            color: var(--hoverColor);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo-link img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            animation: spin 2s linear infinite;
+        }
+
+        .logo-link img:hover {
+            animation-play-state: paused;
+        }
+
+
+        .page-title {
+            text-align: center;
+            margin: 20px 0 30px;
+            font-family: lovelyBubbles;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--founderCardColor);
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            font-size: 1rem;
+            color: var(--color);
+        }
+
+
+        #mapMain {
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        .map-wrapper {
+            width: 100%;
+
+            background-color: var(--cardBg);
+
+            padding: 20px;
+
+            border-radius: 25px;
+
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #map {
+            width: 100%;
+            height: 650px;
+
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+
+        .map-wrapper:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+
+
+        @media (max-width: 768px) {
+
+            nav {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo-link {
+                order: -1;
+            }
+
+            .logo-link img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            #map {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+
+        <header>
+            <nav>
+
+                <a href="../other HTML pages/order.html" class="nav-btn">
+                    Order
+                </a>
+
+                <a href="../other HTML pages/ideology.html" class="nav-btn">
+                    Brand Ideology
+                </a>
+
+                <a href="../index.html" class="logo-link">
+                    <img src="../imgs/logo.png" alt="The Food Depot Logo">
+                </a>
+
+                <a href="../other HTML pages/map.html" class="nav-btn">
+                    Physical Resources
+                </a>
+
+                <a href="../other HTML pages/signIn.html" class="nav-btn">
+                    Sign In / Create Account
+                </a>
+
+            </nav>
+        </header>
+
+       
+
+        <main id="mapMain">
+
+            <section class="page-title">
+                <h1>Physical Resources</h1>
+                <p>
+                    Find a list of available physical food pantries and their contacts!
+                </p>
+            </section>
+
+            <div class="map-wrapper">
+                <div id="map"></div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Mapbox Script -->
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZW1sb3N0aW53b25kZXJsYW5kIiwiYSI6ImNtcTN6dXluazAyY3oycG9qajlmYmF3MmcifQ.aTQ2Ej0btj-FXjvmcBeIlA';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [-71.06776, 42.35816],
+            zoom: 9
+        });
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        const locations = [
+            {
+                provider: "Metropolitan New York Coordinating Council on Jewish Poverty, Inc.",
+                address: "77 Water Street, Manhattan, NY 10005",
+                contactInfo: "Mr. Aaron Cyperstein<br>(212) 453-9511<br>acyperstein@metcouncil.org",
+                coordinates: [-74.0082436, 40.7042035]
+            },
+            {
+                provider: " ACTS Community Development Corporation",
+                address: "2114 Mermaid Avenue Brooklyn NY 11224",
+                contactInfo: "Mrs. Quaneesha Robbins (718) 415-1170 Coneylighthouse@aol.com",
+                coordinates: [-73.9884146, 40.576042]
+            },
+            {
+                provider: "American Council of Minority Women, Inc.",
+                address: "1090 Coney Island Avenue Brooklyn NY 11230",
+                contactInfo: "Ms Bazah Roohi (347) 865-2769 acmw.ny@gmail.com",
+                coordinates: [-73.9665526, 40.6310011]
+            },
+            {
+                provider: "Arab American Association of New York, Inc.",
+                address: "6803 5th Avenue Brooklyn NY 11220",
+                contactInfo: "Ms Marwa Janini (551) 280-6724 marwa@arabamericanny.org",
+                coordinates: [-74.0204978, 40.6338739]
+            },
+            {
+                provider: "Apna Brooklyn Community Center, Inc.",
+                address: "1236 Neptune Avenue, 2nd Floor Brooklyn NY 11235",
+                contactInfo: "Ms Erum Hanif (718) 513-4700 erum.hanif@apnabrooklyncommunity.com",
+                coordinates: [-73.9801061, 40.5792165]
+            },
+            {
+                provider: "Arab-American Family Support Center, Inc.",
+                address: "150 Court Street, 3rd Floor Brooklyn NY 11201",
+                contactInfo: "Ms Kerry Sesil (718) 643-8000 grants@aafscny.org",
+                coordinates: [-73.9930009, 40.6887851]
+            },
+            {
+                provider: "The Bay Ridge Community Development Center Inc.",
+                address: "6806 5th Avenue Brooklyn NY 11220",
+                contactInfo: "Ms Bibi Esahack (347) 560-6700 info@brcdc.org",
+                coordinates: [-74.021103, 40.6340887]
+            },
+            {
+                provider: "Bensonhurst Council of Jewish Organizations",
+                address: "8635 21st Avenue Brooklyn NY 11214",
+                contactInfo: "Rabbi Gary Pollack (718) 337-1834 nravgp@aol.com",
+                coordinates: [-73.9965897, 40.6023786]
+            },
+            {
+                provider: " Bergen Basin Community Development Corporation d/b/a Millennium Development",
+                address: "2331 Bergen Avenue Brooklyn NY 11234",
+                contactInfo: "Ms Nicholas Miller (718) 444-0101 nmiller@milldev.org",
+                coordinates: [-73.8988041, 40.6185688]
+            },
+            {
+                provider: "BHRAGS Home Care Corp.",
+                address: "2005 Nostrand Ave Brooklyn NY 11210",
+                contactInfo: "Mr. Roberto Samedy (718) 345-5940 rsrsamedy@bhrags.org",
+                coordinates: [-73.9478635, 40.6366721]
+            },
+            {
+                provider: "Black Veterans for Social Justice, Inc.",
+                address: "665 Willoughby Avenue Brooklyn NY 11206",
+                contactInfo: "Ms Wendy McClinton (718) 852-6004 ceo@bvsj.org",
+                coordinates: [-73.9425895, 40.6948895]
+            },
+            {
+                provider: "Bnai Raphael Chesed Organization, Inc.",
+                address: "3846 Flatlands Ave. Flr 1, Brooklyn NY 11234",
+                contactInfo: "Mr. Raphael Hazan (917) 861-7282 bnairaphael@yahoo.com",
+                coordinates: [-73.9188, 40.6108]
+            },
+            {
+                provider: "Boro Park Jewish Community Council",
+                address: "1310 46th Street, Brooklyn NY 11219",
+                contactInfo: "Rabbi Avi Greenstein (718) 972-6600 agreenstein@bpjcc.org",
+                coordinates: [-73.9992, 40.6352]
+            },
+            {
+                provider: "Brooklyn Emerge, Inc.",
+                address: "1001 Newkirk Ave, Brooklyn NY 11230",
+                contactInfo: "Mr. Salman Rehman (929) 308-9191 salman@brooklynemerge.org",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "Camp Friendship, Inc.",
+                address: "339 8th Street, Brooklyn NY 11215",
+                contactInfo: "Ms Soni Saluja (646) 591-5635 soninder@gmail.com",
+                coordinates: [-73.9837, 40.6601]
+            },
+            {
+                provider: "Campaign Against Hunger, Inc., The",
+                address: "2010 Fulton Street, Brooklyn NY 11233",
+                contactInfo: "Dr. Melony Samuels (718) 773-3551 msamuels@tcahnyc.org",
+                coordinates: [-73.9233, 40.6739]
+            },
+            {
+                provider: "Center for Family Life in Sunset Park, Inc.",
+                address: "443 39th Street, Brooklyn NY 11232",
+                contactInfo: "Ms Julia Jean-Francois (718) 438-9500 j.jean-francois@centerforfamilylife.org",
+                coordinates: [-73.9989, 40.6543]
+            },
+            {
+                provider: "Catholic Charities Neighborhood Services, Inc.",
+                address: "191 Joralemon Street, Brooklyn NY 11201",
+                contactInfo: "Reverend Alfred LoPinto (718) 722-6087 LOPINTO@ccbq.org",
+                coordinates: [-73.9897, 40.6943]
+            },
+            {
+                provider: "Chinese American Social Services Center, Inc.",
+                address: "124 Avenue O, Brooklyn NY 11204",
+                contactInfo: "Yan Shan Wu (718) 975-0955 124cass@gmail.com",
+                coordinates: [-73.9898, 40.6165]
+            },
+            {
+                provider: "Collective Focus Resource Hub, Inc.",
+                address: "1046 Broadway, Brooklyn NY 11221",
+                contactInfo: "Ms Briana Calderon (941) 504-4411 info@collectivefocus.site",
+                coordinates: [-73.925, 40.6914]
+            },
+            {
+                provider: "Community Help in Park Slope, Inc.",
+                address: "200 Fourth Avenue, Brooklyn NY 11217",
+                contactInfo: "Ms. Sandra Hagan, LMSW (718) 237-2962 sandy@chipsonline.org",
+                coordinates: [-73.9805, 40.6779]
+            },
+            {
+                provider: "Cong Chasdei Lev",
+                address: "1573 39th Street, Brooklyn NY 11218",
+                contactInfo: "Mr. Naftali Miller (718) 831-2500 office@chasdeilev.org",
+                coordinates: [-73.973, 40.6402]
+            },
+            {
+                provider: "Council of Jewish Organizations of Flatbush, Inc.",
+                address: "1523 Avenue M, 3rd Floor, Brooklyn NY 11230",
+                contactInfo: "Mr. Louis Welz (718) 377-2900 lwelz@jewishcouncil.org",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "Council of Peoples Organization, Inc.",
+                address: "1077 Coney Island Avenue, Brooklyn NY 11230",
+                contactInfo: "Mr. Mohammad Razvi (718) 434-3266 mrazvi@copo.org",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "Crown Heights Jewish Community Council, Inc.",
+                address: "392 Kingston Ave, Brooklyn NY 11225",
+                contactInfo: "Mr. Eli Cohen (718) 771-9000 ecohen@chjcc.org",
+                coordinates: [-73.9502, 40.6631]
+            },
+            {
+                provider: "Crown Heights Youth Collective, Inc.",
+                address: "113 Rogers Avenue, Brooklyn NY 11216",
+                contactInfo: "Mr. Richard E. Green (718) 756-7600 rgreen012@aol.com",
+                coordinates: [-73.9494, 40.6744]
+            },
+            {
+                provider: "Elite Learners, Inc.",
+                address: "45 Belmont Ave., Brooklyn NY 11212",
+                contactInfo: "Ms Camara Jackson (347) 742-7913 cjackson@elitelearners.org",
+                coordinates: [-73.9168, 40.6634]
+            },
+            {
+                provider: "Expecting Relief",
+                address: "133 Jamaica Ave, Brooklyn NY 11207",
+                contactInfo: "Ms Vanessa Bracetty-Ormsby (347) 946-2914 info@expectingrelief.org",
+                coordinates: [-73.8907, 40.6778]
+            },
+            {
+                provider: "Family Services Network of New York, Inc.",
+                address: "1420 Bushwick Avenue, Brooklyn NY 11207",
+                contactInfo: "Dr. Benjamin Igwe (718) 455-6010 bigwe@fsnny.org",
+                coordinates: [-73.8907, 40.6778]
+            },
+            {
+                provider: "Flatbush Community Fund, Inc.",
+                address: "1968 Flatbush Avenue, Brooklyn NY 11220",
+                contactInfo: "Ms Theresa Monforte-Caraballo (347) 662-6230 Theresa@grandmasloveinc.org",
+                coordinates: [-74.0158, 40.6374]
+            },
+            {
+                provider: "Grandma\'s Love, Inc.",
+                address: "261 68th Street, Brooklyn NY 11220",
+                contactInfo: "Ms Theresa Monforte-Caraballo (347) 662-6230 Theresa@grandmasloveinc.org",
+                coordinates: [-74.0158, 40.6374]
+            },
+            {
+                provider: "Grant House Unity Corp.",
+                address: "2049 Flatbush Avenue, Brooklyn NY 11234",
+                contactInfo: "Mr. Ben DiCostanzo (718) 266-9700 granthouseunity@gmail.com",
+                coordinates: [-73.9188, 40.6108]
+            },
+            {
+                provider: "Health Essential Association, Inc.",
+                address: "2101 E16th Street 2FL, Brooklyn NY 11229",
+                contactInfo: "Ms Lina Chen (646) 515-6898 healthessentialassociation@hotmail.com",
+                coordinates: [-73.9454, 40.6017]
+            },
+            {
+                provider: "Hebrew Educational Society",
+                address: "9502 Seaview Avenue, Brooklyn NY 11236",
+                contactInfo: "Ms Moshit Rivkin (718) 241-3000 Moshit@thehes.org",
+                coordinates: [-73.9028, 40.6257]
+            },
+            {
+                provider: "IGUD Harabonim of America, Inc.",
+                address: "11 Sunrise Plaza, Suite 305, Brooklyn NY 11580",
+                contactInfo: "Rabbi Moshe Schmerler (833) 722-4483 rabbi@igud.org",
+                coordinates: [-73.7663, 40.6648]
+            },
+            {
+                provider: "Institute for Community Equity and Sharing, Inc.",
+                address: "13 Greene Avenue, Brooklyn NY 11238",
+                contactInfo: "Mr. Jed Marcus (347) 351-4242 marcus@onecommunitynyc.org",
+                coordinates: [-73.9636, 40.6815]
+            },
+            {
+                provider: "Jewish Community Council of Canarsie, Inc.",
+                address: "1170 Pennsylvania Avenue, Suite 1B, Brooklyn NY 11239",
+                contactInfo: "Mr. Avrohom Hecht (718) 495-6210 projectlead09@gmail.com",
+                coordinates: [-73.8826, 40.6349]
+            },
+            {
+                provider: "Jewish Community Council of Greater Coney Island, Inc.",
+                address: "3001 West 37th Street, Brooklyn NY 11224",
+                contactInfo: "Rabbi Moshe Wiener (718) 449-5000 m.wiener@jccgci.org",
+                coordinates: [-73.9974, 40.5764]
+            },
+            {
+                provider: "Kings Bay YM-YWHA, Inc.",
+                address: "3495 Nostrand Avenue, Brooklyn NY 11229",
+                contactInfo: "Mr. Leonard Petlakh (718) 648-7703 lpetlakh@kingsbayy.org",
+                coordinates: [-73.9454, 40.6017]
+            },
+            {
+                provider: "Life of Hope",
+                address: "1377 Brooklyn Ave, Brooklyn NY 11203",
+                contactInfo: "Professor POREZ LUXAMA (917) 216-3137 porez.luxama@gmail.com",
+                coordinates: [-73.9432, 40.6499]
+            },
+            {
+                provider: "Make the Road New York",
+                address: "301 Grove St., Brooklyn NY 11237",
+                contactInfo: "Mr. Derik Mendez (866) 365-2724 Derik.Mendez@maketheroadny.org",
+                coordinates: [-73.9203, 40.7059]
+            },
+            {
+                provider: "Masbia of Boro Park",
+                address: "5402 New Utrecht Ave, Brooklyn NY 11219",
+                contactInfo: "Mr. Alexander Rapaport (718) 972-4446 alex@masbia.org",
+                coordinates: [-73.9992, 40.6352]
+            },
+            {
+                provider: "Masbia of Flatbush",
+                address: "1372 Coney Island Ave, Brooklyn NY 11230",
+                contactInfo: "Mr. Alexander Rapaport (718) 972-4446 alex@masbia.org",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "Mixteca Organization, Inc.",
+                address: "245 23rd Street, 2nd floor, Brooklyn NY 11215",
+                contactInfo: "Ms Lorena Kourousias (718) 896-5479 lkouousias@mixteca.org",
+                coordinates: [-73.9837, 40.6601]
+            },
+            {
+                provider: "Muna Social Services, Inc.",
+                address: "464 Crescent Street, Brooklyn NY 11208",
+                contactInfo: "Dr. Jahangir Kabir (516) 864-5078 jkabir@munassinc.org",
+                coordinates: [-73.8683, 40.6757]
+            },
+            {
+                provider: "National Committee for the Furtherance of Jewish Education",
+                address: "824 Eastern Parkway, Brooklyn NY 11213",
+                contactInfo: "Rabbi Yaakov Silberstein (718) 735-0200 ncfjefood@gmail.com",
+                coordinates: [-73.9409, 40.67]
+            },
+            {
+                provider: "New York United Jewish Association, Inc.",
+                address: "2076 Flatbush Avenue, Brooklyn NY 11234",
+                contactInfo: "Mr. Michael Rinkoff (718) 407-1832 mendy@jccmp.org",
+                coordinates: [-73.9188, 40.6108]
+            },
+            {
+                provider: "Out of the Walls Ministries, Inc.",
+                address: "1010 Cleveland Street, Brooklyn NY 11208",
+                contactInfo: "Mr. Micah Ransome (347) 687-9295 outofthewallsnyc@gmail.com",
+                coordinates: [-73.8683, 40.6757]
+            },
+            {
+                provider: "Pakistani American Youth Organization, Inc.",
+                address: "1045 Coney Island Avenue, Brooklyn NY 11230",
+                contactInfo: "Mr. Waqil Ahmed (718) 713-2000 info@payousa.org",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "Reaching Out Community Services, Inc.",
+                address: "7708 New Utrecht Avenue, Brooklyn NY 11214",
+                contactInfo: "Mr. Thomas Neve (718) 373-4565 Tomneve@rcsprograms.org",
+                coordinates: [-74.0009, 40.6008]
+            },
+            {
+                provider: "People In Need, Inc.",
+                address: "944 Newkirk Avenue, Brooklyn NY 11230",
+                contactInfo: "Mrs. NOWSHIN ALI (917) 615-8206 peopleinneednyc@gmail.com",
+                coordinates: [-73.9629, 40.6193]
+            },
+            {
+                provider: "SBH Community Service Network, Inc.",
+                address: "425 Kings Hwy, Brooklyn NY 11223",
+                contactInfo: "Mr. Andrey Oliskevich (718) 787-1100 Andrey@sbhonline.org",
+                coordinates: [-73.9719, 40.5982]
+            },
+            {
+                provider: "Seeds in the Middle",
+                address: "153 Warren Street, Brooklyn NY 11201",
+                contactInfo: "Ms Nancie Katz (917) 697-3745 nancie@seedsinthemiddle.org",
+                coordinates: [-73.9897, 40.6943]
+            },
+            {
+                provider: "Shorefront Jewish Community Council, Inc.",
+                address: "128 Brighton Beach Avenue 5th Floor Suite 505, Brooklyn NY 11235",
+                contactInfo: "Mrs. Larisa Boas (718) 743-0575 l.boas@shorefrontjcc.org",
+                coordinates: [-73.9606, 40.5814]
+            },
+            {
+                provider: "Southside Community Mission, Inc.",
+                address: "280 Marcy Avenue, Brooklyn NY 11211",
+                contactInfo: "Ms Gertrudis Duran (718) 782-8181 250hooperst@gmail.com",
+                coordinates: [-73.9534, 40.7141]
+            },
+            {
+                provider: "Southside United Housing Development Fund Corporation",
+                address: "434 S 5th St, Brooklyn NY 11211",
+                contactInfo: "Mr. Juan Ramos (718) 387-3600 jramos@lossures.org",
+                coordinates: [-73.9534, 40.7141]
+            },
+            {
+                provider: "Sri Durga Mandir Multicultural Community Center, Inc.",
+                address: "18 Ashford Street, Brooklyn NY 11207",
+                contactInfo: "Mr. Parsueram Indarjit (718) 348-0107 ptkrishna620@yahoo.com",
+                coordinates: [-73.8907, 40.6778]
+            },
+            {
+                provider: "St. Patrick\'s Church",
+                address: "9511 4th Avenue, Brooklyn NY 11209",
+                contactInfo: "Mr. James Lamond (718) 833-2488 jamesflamond@gmail.com",
+                coordinates: [-74.031, 40.621]
+            },
+            {
+                provider: "Trinity Human Services Corporation",
+                address: "153 A Johnson Avenue, Brooklyn NY 11206",
+                contactInfo: "Miss Victoria Kamungu (718) 388-3176 victoriasfmatrinity@gmail.com",
+                coordinates: [-73.9365, 40.705]
+            },
+            {
+                provider: "United Jewish Organizations of Williamsburg, Inc.",
+                address: "32 Penn Street, Brooklyn NY 11249",
+                contactInfo: "Mr. David Katz (718) 643-9700 dkatz@unitedjewish.org",
+                coordinates: [-73.9623, 40.7153]
+            },
+            {
+                provider: "Vinegar Hill Food Pantry",
+                address: "228 York St., Brooklyn NY 11201",
+                contactInfo: "Ms Jennifer Macksoud (908) 403-5755 vinegarhillfoodpantry@gmail.com",
+                coordinates: [-73.9897, 40.6943]
+            },
+            {
+                provider: "Women\'s Empowerment Coalition of New York City",
+                address: "437 77th Street, Brooklyn NY 11209",
+                contactInfo: "Ms Somia El-Rowmeim (347) 666-7722 somia@wecnyc.org",
+                coordinates: [-74.031, 40.621]
+            },
+            {
+                provider: "Yemeni American Merchants Association",
+                address: "352 86th Street, #B1, Brooklyn NY 11209",
+                contactInfo: "Mr. Joel Feliciano (718) 238-0033 joel@yamausa.org",
+                coordinates: [-74.031, 40.621]
+            },
+            {
+                provider: "Albanian & American Open Hand Association",
+                address: "2141 Holland Avenue, Suite ML, Bronx NY 10462",
+                contactInfo: "Mr. Aleksander Nilaj (347) 658-8000 aaoha.org@gmail.com",
+                coordinates: [-73.8589, 40.8416]
+            },
+            {
+                provider: "BronxWorks, Inc.",
+                address: "60 East Tremont Avenue, Bronx NY 10453",
+                contactInfo: "Ms Eileen Torres (646) 393-4023 etorres@bronxworks.org",
+                coordinates: [-73.914, 40.8507]
+            },
+            {
+                provider: "Christ Disciples International Ministries, Inc.",
+                address: "399 East Mosholu Parkway North, Bronx NY 10467",
+                contactInfo: "Mr. Emaeyak Ekanem (718) 994-5423 emaeyak@christdisciples.org",
+                coordinates: [-73.8731, 40.8832]
+            },
+            {
+                provider: "Destination Tomorrow, Inc.",
+                address: "452 East 149th Street 3rd Floor, Bronx NY 10455",
+                contactInfo: "Mr. Sean Coleman (646) 723-3325 sean@destinationtomorrow.org",
+                coordinates: [-73.9213, 40.8132]
+            },
+            {
+                provider: "Disciples of Galilee, Inc., The",
+                address: "725 Castle Hill Avenue, Bronx NY 10473",
+                contactInfo: "Mr. Max Acosta (347) 293-6166 thedisciplesofgalilee@gmail.com",
+                coordinates: [-73.8582, 40.8178]
+            },
+            {
+                provider: "Gambian Youths Organization, The",
+                address: "214 E 181st, Bronx NY 10457",
+                contactInfo: "Mr. Salim Drammeh (347) 963-2878 salim.drammeh5@gmail.com",
+                coordinates: [-73.8961, 40.8461]
+            },
+            {
+                provider: "Kingsbridge Heights Community Center, Inc.",
+                address: "3101 Kingsbridge Terrace, Bronx NY 10463",
+                contactInfo: "Raye Barbieri (201) 431-6355 ansleydavenport@gmail.com",
+                coordinates: [-73.9091, 40.8786]
+            },
+            {
+                provider: "Mosholu-Montefiore Community Center, Inc.",
+                address: "3450 Dekalb Avenue, Bronx NY 10467",
+                contactInfo: "Ms Jackina Farshtey (718) 882-4000 jfarshtey@mmcc.org",
+                coordinates: [-73.8731, 40.8832]
+            },
+            {
+                provider: "Part of the Solution",
+                address: "2759 Webster Ave, Bronx NY 10458",
+                contactInfo: "Mr Christina Hanson (718) 329-7151 chanson@potsbronx.org",
+                coordinates: [-73.8872, 40.8617]
+            },
+            {
+                provider: "The Union Grove Baptist Church",
+                address: "1488 Hoe Ave., Bronx NY 10460",
+                contactInfo: "Mr. Joseph Alston (347) 590-3881 jalston@ugmbc-ny.org",
+                coordinates: [-73.8818, 40.8272]
+            },
+            {
+                provider: "Urban Health Plan, Inc.",
+                address: "1065 Southern Blvd, Bronx NY 10459",
+                contactInfo: "Mr. Donald Eversley (347) 446-0792 donald.eversley@urbanhealthplan.org",
+                coordinates: [-73.8966, 40.8208]
+            },
+            {
+                provider: "Word of Life International, Inc.",
+                address: "830 Union Avenue, Bronx NY 10459",
+                contactInfo: "Reverend John Udo-Okon (718) 861-5678 pastorjohn1299@yahoo.com",
+                coordinates: [-73.8966, 40.8208]
+            },
+            {
+                provider: "Battalion Pentecostal Assembly, Inc.",
+                address: "454 Beach 67th Street, Queens NY 11692",
+                contactInfo: "Mr. David T. Cockfield (718) 634-7172 dcockfield@bparock.org",
+                coordinates: [-73.7908, 40.5907]
+            },
+            {
+                provider: "Korean Community Services of Metropolitan New York, Inc.",
+                address: "203-05 32nd Ave, Bayside NY 11361",
+                contactInfo: "Emily Li (718) 939-6137 emily@kcsny.org",
+                coordinates: [-73.7684, 40.7622]
+            },
+            {
+                provider: "Mount Moriah African Methodist Episcopal Church",
+                address: "16-20 Francis Lewis Blvd, Queens NY 11411",
+                contactInfo: "Dr. Barbra Talley (718) 276-1750 btalley@moriahcity.org",
+                coordinates: [-73.7354, 40.6955]
+            },
+            {
+                provider: "Douglaston Local Development Corporation",
+                address: "234-21 41st Street, Queens NY 11363",
+                contactInfo: "Ms Rebecca Gellos (347) 946-0017 contact@dougldc.org",
+                coordinates: [-73.7476, 40.7748]
+            },
+            {
+                provider: "Buddhist Tzu Chi Foundation",
+                address: "137-77 Northern Boulevard, Queens NY 11354",
+                contactInfo: "Mrs. San-San Chiang (718) 888-0866 newyork_admin@tzuchi.us",
+                coordinates: [-73.8326, 40.7613]
+            },
+            {
+                provider: "CHAZAQ Organization USA, Inc.",
+                address: "141-24 Jewel Ave, Queens NY 11367",
+                contactInfo: "Mr. Israel Peskowitz (718) 285-9132 community@chazaq.org",
+                coordinates: [-73.8204, 40.7294]
+            },
+            {
+                provider: "South Asian Council for Social Services",
+                address: "143-02 45th Ave, Queens NY 11355",
+                contactInfo: "Ms Sudha Acharya (718) 321-7929 sudha@sacssny.org",
+                coordinates: [-73.8259, 40.7516]
+            },
+            {
+                provider: "Young Women\'s Christian Association of Queens",
+                address: "42-07 Parsons Blvd, Flushing NY 11355",
+                contactInfo: "Mrs. Liceth Turo-Garcia (718) 353-4553 ltgarcia@ywcaqueens.org",
+                coordinates: [-73.8259, 40.7516]
+            },
+            {
+                provider: "Queens Jewish Community Council, Inc.",
+                address: "119-45 Union Turnpike, Forest Hills NY 11375",
+                contactInfo: "Mayer Waxman (718) 544-9033 mwaxman@qjcc.org",
+                coordinates: [-73.8446, 40.7207]
+            },
+            {
+                provider: "Queens Law Associates Not-For-Profit Corporation",
+                address: "118-21 Queens Blvd, Forest Hills NY 11375",
+                contactInfo: "Mr. Brian Schatz (929) 343-5733 bschatz@queensdefenders.org",
+                coordinates: [-73.8446, 40.7207]
+            },
+            {
+                provider: "American Pakistani Advocacy Group Cares Inc.",
+                address: "159-16 Union Turnpike, Fresh Meadows NY 11366",
+                contactInfo: "Mr. Hashim Malik (347) 596-7202 apagcares@gmail.com",
+                coordinates: [-73.7783, 40.7307]
+            },
+            {
+                provider: "SCO Family of Services",
+                address: "1415 Kellum Place, Suite 140, Garden City NY 11530",
+                contactInfo: "Ms Floaria Ladja (718) 257-7208 FLadja@sco.org",
+                coordinates: [-73.5963, 40.728]
+            },
+            {
+                provider: "LGBT Network",
+                address: "125 Kennedy Drive, Suite 100, Hauppauge NY 11788",
+                contactInfo: "Dr. David Kilmnick (631) 665-2300 david@lgbtnetwork.org",
+                coordinates: [-73.2099, 40.8218]
+            },
+            {
+                provider: "Haitian Americans United for Progress, Inc.",
+                address: "19717 Hillside Ave, Hollis NY 11423",
+                contactInfo: "Ms Elsie Saint Louis (718) 527-3776 esaintlouis@haupinc.org",
+                coordinates: [-73.7651, 40.7084]
+            },
+            {
+                provider: "Mt. Olivet Baptist Church of Hollis",
+                address: "202-03 Hollis Ave, Hollis NY 11412",
+                contactInfo: "Dr. Frankco Harris (718) 465-3746 fharris@mobch.org",
+                coordinates: [-73.7658, 40.6955]
+            },
+            {
+                provider: "New Immigrant Community Empowerment (NICE)",
+                address: "71-29 Roosevelt Avenue, Jackson Heights NY 11372",
+                contactInfo: "Ms Vanessa Marquez (914) 316-4600 nilbia@nynice.org",
+                coordinates: [-73.8915, 40.7461]
+            },
+            {
+                provider: "Greater Bethel Community Development Corporation",
+                address: "95-26 Sutphin Boulevard, Suite B, Jamaica NY 11435",
+                contactInfo: "Dr. Maria Hubbard (718) 350-9949 mhub133061@aol.com",
+                coordinates: [-73.8022, 40.7018]
+            },
+            {
+                provider: "Queens Economic Development Corporation",
+                address: "120-55 Queens Blvd. Suite 309, Kew Gardens NY 11424",
+                contactInfo: "Mr. Seth Bornstein (718) 263-0546 sbornstein@queensny.org",
+                coordinates: [-73.83, 40.715]
+            },
+            {
+                provider: "TSQ, Inc.",
+                address: "129-01 Metropolitan Avenue, Kew Gardens NY 11415",
+                contactInfo: "Mr. Isaac Katz (718) 850-8070 info@tsqinc.org",
+                coordinates: [-73.83, 40.71]
+            },
+            {
+                provider: "Woodside on the Move, Inc.",
+                address: "51-23B Queens Blvd, Queens NY 11377",
+                contactInfo: "Jacqueline Amaya (917) 592-7697 jamaya@woodsideonthemove.org",
+                coordinates: [-73.9026, 40.7437]
+            },
+            {
+                provider: "Samuel Field YM & YWHA, Inc.",
+                address: "58-20 Little Neck Pkwy, Queens NY 11362",
+                contactInfo: "Mrs. Danielle Ellman (718) 225-6750 dellman@commonpointqueens.org",
+                coordinates: [-73.7354, 40.7556]
+            },
+            {
+                provider: "New York Edge, Inc.",
+                address: "58-12 Queens Blvd, Queens NY 11377",
+                contactInfo: "Ms Rachael Gazdick (347) 417-8150 rgazdick@newyorkedge.org",
+                coordinates: [-73.9026, 40.7437]
+            },
+            {
+                provider: "Queens Community House, Inc.",
+                address: "108-25 62nd Drive, Queens NY 11375",
+                contactInfo: "Mr. Anne M. Foerg (718) 592-5757 afoerg@qchnyc.org",
+                coordinates: [-73.8446, 40.7207]
+            },
+            {
+                provider: "Project Lead, Inc.",
+                address: "123-19 Hillside Avenue, Richmond Hill NY 11418",
+                contactInfo: "Mr. Avrohom Hecht (718) 495-6210 canarsiejcc@gmail.com",
+                coordinates: [-73.8329, 40.6978]
+            },
+            {
+                provider: "The Greater Ridgewood Youth Council, Inc.",
+                address: "5903 Summerfield Street, Ridgewood NY 11385",
+                contactInfo: "Mrs. Michelle Koch (718) 456-5437 mkoch@thegryc.org",
+                coordinates: [-73.9012, 40.7021]
+            },
+            {
+                provider: "The Caribbean Equality Project, Inc.",
+                address: "10942 124th Street, South Ozone Park NY 11420",
+                contactInfo: "Mr. Mohamed Q. Amin (347) 709-3179 mohamed@caribbeanequalityproject.org",
+                coordinates: [-73.8274, 40.6749]
+            },
+            {
+                provider: "East River Development Alliance, Inc.",
+                address: "12-11 40th Avenue, Long Island City NY 11101",
+                contactInfo: "Mr. Carlos Cano (646) 657-6727 carlos@urbanupbound.org",
+                coordinates: [-73.9421, 40.7482]
+            },
+            {
+                provider: "Fortune Society, Inc., The",
+                address: "29-76 Northern Boulevard, Long Island City NY 11101",
+                contactInfo: "Mr. Brian Robinson (347) 510-3613 brobinson@fortunesociety.org",
+                coordinates: [-73.9421, 40.7482]
+            },
+            {
+                provider: "The Migrant Kitchen Incorporated",
+                address: "41-15 36th Street, Long Island City NY 11101",
+                contactInfo: "Ms Jaclinn Tanney (845) 641-4051 Jaclinn@themigrantkitchennyc.com",
+                coordinates: [-73.9421, 40.7482]
+            },
+            {
+                provider: "ICNA Relief USA Programs, Inc.",
+                address: "1529 Jericho Turnpike, Suite #1, New Hyde Park NY 11040",
+                contactInfo: "Ms Shumaila Siddiqui (718) 249-9992 shumaila.noor@icnarelief.org",
+                coordinates: [-73.6876, 40.7357]
+            },
+            {
+                provider: "Metropolitan New York Coordinating Council on Jewish Poverty, Inc.",
+                address: "77 Water Street, Manhattan NY 10005",
+                contactInfo: "Mr. Aaron Cyperstein (212) 453-9511 acyperstein@metcouncil.org",
+                coordinates: [-74.0088, 40.7073]
+            },
+            {
+                provider: "Cabrini Immigrant Services of New York City, Inc.",
+                address: "701 Ft. Washington Ave, New York NY 10040",
+                contactInfo: "Ms Ella Nimmo (212) 791-4590 ellanimmo@cis-nyc.org",
+                coordinates: [-73.9304, 40.8614]
+            },
+            {
+                provider: "Catholic Charities Community Services, Archdiocese of New York",
+                address: "1011 First Avenue, 6th Floor, New York NY 10022",
+                contactInfo: "Ms Beatriz Diaz Taveras (646) 794-2438 Beatriz.diaztaveras@archny.org",
+                coordinates: [-73.9675, 40.7596]
+            },
+            {
+                provider: "Chai Lifeline, Inc.",
+                address: "151 West 30th Street, New York NY 10001",
+                contactInfo: "Ms Leah Bloch (212) 699-6608 lbloch@chailifeline.org",
+                coordinates: [-73.9967, 40.7484]
+            },
+            {
+                provider: "Chinese American Planning Council, Inc.",
+                address: "150 Elizabeth Street, New York NY 10012",
+                contactInfo: "Mr. Carlyn Cowen (212) 941-0920 ccowen@cpc-nyc.org",
+                coordinates: [-73.9983, 40.726]
+            },
+            {
+                provider: "Church of the Holy Apostles",
+                address: "296 9th Avenue, New York NY 10001",
+                contactInfo: "Mr. Michael Ottley (646) 998-6105 mottley@holyapostlesnyc.org",
+                coordinates: [-73.9967, 40.7484]
+            },
+            {
+                provider: "City Harvest, Inc.",
+                address: "150 52nd Street, New York NY 11232",
+                contactInfo: "Ms Jenna Gaglione (203) 885-9520 jgaglione@cityharvest.org",
+                coordinates: [-73.975, 40.7529]
+            },
+            {
+                provider: "CityMeals on Wheels",
+                address: "355 Lexington Avenue, New York NY 10017",
+                contactInfo: "Ms Rachel Sherrow (646) 866-6289 rachel@citymeals.org",
+                coordinates: [-73.975, 40.7529]
+            },
+            {
+                provider: "Coalition for the Homeless, Inc.",
+                address: "129 Fulton Street, New York NY 10038",
+                contactInfo: "Mr Dave Giffen (212) 776-2004 dgiffen@cfthomeless.org",
+                coordinates: [-74.0044, 40.7097]
+            },
+            {
+                provider: "Community Healthcare Network, Inc.",
+                address: "60 Madison Avenue, 5th floor, New York NY 10010",
+                contactInfo: "Ms Christine Rutkoski (212) 545-2482 crutkoski@chnnyc.org",
+                coordinates: [-73.9862, 40.7397]
+            },
+            {
+                provider: "Community League of the Heights, Inc.",
+                address: "500 West 159 Street, New York NY 10032",
+                contactInfo: "Ms Yvonne Stennett (212) 795-4779 ystennett@cloth159.org",
+                coordinates: [-73.939, 40.8384]
+            },
+            {
+                provider: "Dominican Women\'s Development Center, Inc.",
+                address: "519 W. 189th Street, New York NY 10040",
+                contactInfo: "Mrs. Rosita Romero (212) 994-6060 rromero@dwdc.org",
+                coordinates: [-73.9304, 40.8614]
+            },
+            {
+                provider: "Evangelical Lutheran Church of the Advent",
+                address: "2504 Broadway, New York NY 10025",
+                contactInfo: "Reverend Danielle Miller (212) 665-2504 pastordanielle@adventnyc.org",
+                coordinates: [-73.9664, 40.7994]
+            },
+            {
+                provider: "Father\'s Heart Ministries, The",
+                address: "543-545 East 11th Street, New York NY 10009",
+                contactInfo: "Mrs. Marian Hutchins (212) 375-1765 marianhutchins@fathersheartnyc.org",
+                coordinates: [-73.9778, 40.7255]
+            },
+            {
+                provider: "God\'s Love We Deliver, Inc.",
+                address: "166 Avenue of the Americas, New York NY 10013",
+                contactInfo: "Ms Karen Pearl (212) 294-8194 kpearl@glwd.org",
+                coordinates: [-74.0054, 40.7198]
+            },
+            {
+                provider: "Harvest Home Farmer\'s Market, Inc.",
+                address: "18 West 126th Street, New York NY 10027",
+                contactInfo: "Ms Maritza Owens (212) 828-3361 maritzao@hrvesthomefm.org",
+                coordinates: [-73.9515, 40.8117]
+            },
+            {
+                provider: "Henry Street Settlement",
+                address: "265 Henry Street, New York NY 10002",
+                contactInfo: "Mr. David Garza (212) 766-9200 dgarza@henrystreet.org",
+                coordinates: [-73.9857, 40.7157]
+            },
+            {
+                provider: "Hetrick-Martin Institute, Inc.",
+                address: "2 Astor Place, New York NY 10003",
+                contactInfo: "Mr. Joe Pressley (212) 674-2600 jpressley@hmi.org",
+                coordinates: [-73.9903, 40.7296]
+            },
+            {
+                provider: "Hispanic Federation, Inc.",
+                address: "55 Exchange Place, Suite 501, New York NY 10005",
+                contactInfo: "Mr. Frankie Miranda (212) 233-8955 fmiranda@hispanicfederation.org",
+                coordinates: [-74.0088, 40.7073]
+            },
+            {
+                provider: "Lower East Side Girls Club of New York, Inc., The",
+                address: "101 Avenue D, New York NY 10009",
+                contactInfo: "Ms Bessie Taliaferro (513) 560-7770 bessie.taliaferro@girlsclub.org",
+                coordinates: [-73.9778, 40.7255]
+            },
+            {
+                provider: "Metropolitan College of New York",
+                address: "60 West Street, New York NY 10006",
+                contactInfo: "Dr. Joanne Passaro (212) 343-1234 jpassaro@mcny.edu",
+                coordinates: [-74.0111, 40.7097]
+            },
+            {
+                provider: "Nazareth Housing, Inc.",
+                address: "519 East 11th St., New York NY 10009",
+                contactInfo: "Ms Rachel Levine (646) 713-2729 rlevine@nazarethhousingnyc.org",
+                coordinates: [-73.9778, 40.7255]
+            },
+            {
+                provider: "New Alternatives for Children, Inc.",
+                address: "37 West 26th Street, New York NY 10010",
+                contactInfo: "Ms Lara Foster (917) 464-5212 lfoster@NacKidsCan.org",
+                coordinates: [-73.9862, 40.7397]
+            },
+            {
+                provider: "New York Common Pantry, Inc.",
+                address: "8 East 109th Street, New York NY 10029",
+                contactInfo: "Mr. Stephen Grimaldi (917) 720-9701 sgrimaldi@nycommonpantry.org",
+                coordinates: [-73.943, 40.7939]
+            },
+            {
+                provider: "NY Community Fridge Corp.",
+                address: "1760 2nd Avenue, New York NY 10128",
+                contactInfo: "Mr. Daniel Zauderer (917) 497-2514 sgrimaldi@nycommonpantry.org",
+                coordinates: [-73.95, 40.7813]
+            },
+            {
+                provider: "Palante Harlem, Inc.",
+                address: "1411 Amsterdam Avenue, Ground Floor, New York NY 10027",
+                contactInfo: "Ms Elsia Vasquez (212) 491-2541 elsia.vasquez@palanteharlem.org",
+                coordinates: [-73.9515, 40.8117]
+            },
+            {
+                provider: "Phipps Neighborhoods, Inc.",
+                address: "902 Broadway, New York NY 10010",
+                contactInfo: "Mr. Andre White (646) 388-8233 andre.white@phippsny.org",
+                coordinates: [-73.9862, 40.7397]
+            },
+            {
+                provider: "Rauschenbusch Metro Ministries, Inc.",
+                address: "410 W. 40th Street, New York NY 10018",
+                contactInfo: "Ms Tiffany Henkel (212) 594-4464 thenkel@mbcnyc.org",
+                coordinates: [-73.9934, 40.7558]
+            },
+            {
+                provider: "Rethink Food NYC, Inc.",
+                address: "75 Broad St, Suite 707 Floor 7, New York NY 10004",
+                contactInfo: "Ms Kathleen DiPerna (212) 364-7040 kathleend@rethinkfood.org",
+                coordinates: [-74.0124, 40.7034]
+            },
+            {
+                provider: "Trinity\'s Services and Food for the Homeless, Inc.",
+                address: "602 E. 9th Street, New York NY 10009",
+                contactInfo: "Mr. Alex Lawrence (212) 228-5254 alex@safhnyc.org",
+                coordinates: [-73.9778, 40.7255]
+            },
+            {
+                provider: "United Jewish Council of the East Side, Inc.",
+                address: "465 Grand Street, New York NY 10002",
+                contactInfo: "Ms Betsy Jacobson (917) 542-1266 bjacobson@ujces.org",
+                coordinates: [-73.9857, 40.7157]
+            },
+            {
+                provider: "Vision Urbana, Inc.",
+                address: "207-209 East Broadway, New York NY 10002",
+                contactInfo: "Mr. Eric Diaz (646) 626-9748 eric@visionurbana.org",
+                coordinates: [-73.9857, 40.7157]
+            },
+            {
+                provider: "Volunteers of America - Greater New York, Inc.",
+                address: "135 W. 50th Street, New York NY 10020",
+                contactInfo: "Mr. Daniel Lombardo (212) 469-4304 dlombardo@voa-gny.org",
+                coordinates: [-73.9784, 40.7601]
+            },
+            {
+                provider: "Welcome to Chinatown, Inc.",
+                address: "115 Bowery, New York NY 10002",
+                contactInfo: "Ms Victoria Lee (347) 226-1907 chinatown@welcometochinatown.com",
+                coordinates: [-73.9857, 40.7157]
+            },
+            {
+                provider: "West Side Center for Community Life, Inc.",
+                address: "263 West 86th Street, New York NY 10024",
+                contactInfo: "Mr. Kira Garfinkel (212) 362-3662 kgarfinkel@wscah.org",
+                coordinates: [-73.9806, 40.7843]
+            },
+            {
+                provider: "Xavier Mission, Inc.",
+                address: "55 West 15th St., New York NY 10011",
+                contactInfo: "Ms Cassandra Agredo (212) 627-2100 cagredo@xaviermission.org",
+                coordinates: [-73.9997, 40.7423]
+            },
+            {
+                provider: "Young Men\'s Christian Association of Greater New York",
+                address: "5 W. 63rd Street, 6th Floor, New York NY 10023",
+                contactInfo: "Mr. Michael Rivadeneyra (212) 630-9717 mrivadeneyra@ymcanyc.org",
+                coordinates: [-73.9841, 40.7739]
+            },
+            {
+                provider: "Asian Americans For Equality, Inc.",
+                address: "108 Norfolk Street, Ground Floor, New York NY 10002",
+                contactInfo: "Mr. Thomas Yu (646) 970-6805 thomas_yu@aafe.org",
+                coordinates: [-73.9857, 40.7157]
+            },
+            {
+                provider: "House of Good Deeds, Inc.",
+                address: "1 River Place #1406, New York NY 10036",
+                contactInfo: "Mr. Leon Feingold, Esq. (917) 325-4548 info@houseofgooddeeds.org",
+                coordinates: [-73.9878, 40.7573]
+            },
+            {
+                provider: "Uplift NYC, Inc.",
+                address: "73 Elwood Street Suite 1B, New York NY 10040",
+                contactInfo: "Mr. Domingo Estevez Jr. (917) 826-0224 domingo@upliftnyc.us",
+                coordinates: [-73.9304, 40.8614]
+            },
+            {
+                provider: "Catholic Charities of Staten Island",
+                address: "6581 Hylan Boulevard, Staten Island NY 10309",
+                contactInfo: "Ms Claire Atalla (718) 984-1500 adelre@cc-si.org",
+                coordinates: [-74.2393, 40.5431]
+            },
+            {
+                provider: "Community Health Action of Staten Island, Inc.",
+                address: "56 Bay Street, 4th Floor, Staten Island NY 10301",
+                contactInfo: "Ms Diane Arneth (718) 808-1401 diane.arneth@chasiny.org",
+                coordinates: [-74.0997, 40.6312]
+            },
+            {
+                provider: "Dr. Theodore A. Atlas Foundation, Inc.",
+                address: "543 Cary Avenue, Staten Island NY 10310",
+                contactInfo: "Mrs. Sharon Curry (718) 980-7037 sharonc@dratlasfoundation.com",
+                coordinates: [-74.1199, 40.6325]
+            },
+            {
+                provider: "Jewish Community Center of Staten Island, Inc.",
+                address: "1466 Manor Road, Staten Island NY 10314",
+                contactInfo: "Mrs. Orit Lender (718) 475-5227 olender@sijcc.com",
+                coordinates: [-74.1584, 40.5973]
+            },
+            {
+                provider: "Meals on Wheels of Staten Island, Inc.",
+                address: "304 Port Richmond Avenue, Staten Island NY 10302",
+                contactInfo: "Mr. Joseph Tornello (718) 727-4435 jtornello@mealsonwheelsofsi.org",
+                coordinates: [-74.1374, 40.6297]
+            },
+            {
+                provider: "Staten Island Community Job Center, Inc.",
+                address: "774 Port Richmond Avenue, Staten Island NY 10302",
+                contactInfo: "Mrs. Yesenia Mata (773) 931-2635 yesenia@lacolmenanyc.org",
+                coordinates: [-74.1374, 40.6297]
+            },
+            {
+                provider: "Tomchei Shabbos of Staten Island",
+                address: "22 Niles Place, Staten Island NY 10314",
+                contactInfo: "Mr. Milton Pfeiffer (718) 761-8905 pfeif8993@msn.com",
+                coordinates: [-74.1584, 40.5973]
+            },
+            {
+                provider: "University of Notre Dame Alumni Club of Staten Island",
+                address: "64 Bloomingdale Road, Staten Island NY 10309",
+                contactInfo: "Mr. Joseph Delaney (718) 967-9825 Jodelaney@deloitteretired.com",
+                coordinates: [-74.2393, 40.5431]
+            }
+
+        ];
+
+        locations.forEach(location => {
+
+            if (!location.coordinates) return;
+
+            const popupHTML = `
+        <div class="popup-content">
+            <h3>${location.provider}</h3>
+
+            <p>
+                <strong>Address:</strong><br>
+                ${location.address}
+            </p>
+
+            <p>
+                <strong>Contact Information:</strong><br>
+                ${location.contactInfo}
+            </p>
+        </div>
+    `;
+
+            new mapboxgl.Marker()
+                .setLngLat(location.coordinates)
+                .setPopup(
+                    new mapboxgl.Popup({
+                        offset: 25
+                    }).setHTML(popupHTML)
+                )
+                .addTo(map);
+        });
+
+    </script>
+
+</body>
+
+</html>

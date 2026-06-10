@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Food Depot</title>
+    <script type="text/javascript">
+        // <![CDATA[
+        var colours = new Array("#a6f", "#60f", "#60f", "#a6f", "#ccc"); // colours for top, right, bottom and left borders and background of bubbles
+        var bubbles = 200; // maximum number of bubbles on screen
+        var over_or_under = "over"; // set to "over" for bubbles to always be on top, or "under" to allow them to float behind other objects
+
+        /****************************
+        * JavaScript Bubble Cursor  *
+        *(c)2010-13 mf2fm web-design*
+        *  http://www.mf2fm.com/rv  *
+        * DON'T EDIT BELOW THIS BOX *
+        ****************************/
+        var x = ox = 400;
+        var y = oy = 300;
+        var swide = 800;
+        var shigh = 600;
+        var sleft = sdown = 0;
+        var bubb = new Array();
+        var bubbx = new Array();
+        var bubby = new Array();
+        var bubbs = new Array();
+        var sploosh = false;
+
+        function addLoadEvent(funky) {
+            var oldonload = window.onload;
+            if (typeof (oldonload) != 'function') window.onload = funky;
+            else window.onload = function () {
+                if (oldonload) oldonload();
+                funky();
+            }
+        }
+
+        addLoadEvent(buble);
+
+        function buble() {
+            if (document.getElementById) {
+                var i, rats, div;
+                for (i = 0; i < bubbles; i++) {
+                    rats = createDiv("3px", "3px");
+                    rats.style.visibility = "hidden";
+                    rats.style.zIndex = (over_or_under == "over") ? "1001" : "0";
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.top = "1px";
+                    div.left = "0px";
+                    div.bottom = "1px";
+                    div.right = "0px";
+                    div.borderLeft = "1px solid " + colours[3];
+                    div.borderRight = "1px solid " + colours[1];
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.top = "0px";
+                    div.left = "1px";
+                    div.right = "1px";
+                    div.bottom = "0px"
+                    div.borderTop = "1px solid " + colours[0];
+                    div.borderBottom = "1px solid " + colours[2];
+
+                    div = createDiv("auto", "auto");
+                    rats.appendChild(div);
+                    div = div.style;
+                    div.left = "1px";
+                    div.right = "1px";
+                    div.bottom = "1px";
+                    div.top = "1px";
+                    div.backgroundColor = colours[4];
+                    if (navigator.appName == "Microsoft Internet Explorer") div.filter = "alpha(opacity=50)";
+                    else div.opacity = 0.5;
+                    document.body.appendChild(rats);
+                    bubb[i] = rats.style;
+                }
+                set_scroll();
+                set_width();
+                bubble();
+            }
+        }
+
+        function bubble() {
+            var c;
+            if (Math.abs(x - ox) > 1 || Math.abs(y - oy) > 1) {
+                ox = x;
+                oy = y;
+                for (c = 0; c < bubbles; c++) if (!bubby[c]) {
+                    bubb[c].left = (bubbx[c] = x) + "px";
+                    bubb[c].top = (bubby[c] = y - 3) + "px";
+                    bubb[c].width = "3px";
+                    bubb[c].height = "3px"
+                    bubb[c].visibility = "visible";
+                    bubbs[c] = 3;
+                    break;
+                }
+            }
+            for (c = 0; c < bubbles; c++) if (bubby[c]) update_bubb(c);
+            setTimeout("bubble()", 40);
+        }
+
+        document.onmousedown = splash;
+        document.onmouseup = function () { clearTimeout(sploosh); };
+
+        function splash() {
+            ox = -1;
+            oy = -1;
+            sploosh = setTimeout('splash()', 100);
+        }
+
+        function update_bubb(i) {
+            if (bubby[i]) {
+                bubby[i] -= bubbs[i] / 2 + i % 2;
+                bubbx[i] += (i % 5 - 2) / 5;
+                if (bubby[i] > sdown && bubbx[i] > sleft && bubbx[i] < sleft + swide + bubbs[i]) {
+                    if (Math.random() < bubbs[i] / shigh * 2 && bubbs[i]++ < 8) {
+                        bubb[i].width = bubbs[i] + "px";
+                        bubb[i].height = bubbs[i] + "px";
+                    }
+                    bubb[i].top = bubby[i] + "px";
+                    bubb[i].left = bubbx[i] + "px";
+                }
+                else {
+                    bubb[i].visibility = "hidden";
+                    bubby[i] = 0;
+                    return;
+                }
+            }
+        }
+
+        document.onmousemove = mouse;
+        function mouse(e) {
+            if (e) {
+                y = e.pageY;
+                x = e.pageX;
+            }
+            else {
+                set_scroll();
+                y = event.y + sdown;
+                x = event.x + sleft;
+            }
+        }
+
+        window.onresize = set_width;
+        function set_width() {
+            var sw_min = 999999;
+            var sh_min = 999999;
+            if (document.documentElement && document.documentElement.clientWidth) {
+                if (document.documentElement.clientWidth > 0) sw_min = document.documentElement.clientWidth;
+                if (document.documentElement.clientHeight > 0) sh_min = document.documentElement.clientHeight;
+            }
+            if (typeof (self.innerWidth) == 'number' && self.innerWidth) {
+                if (self.innerWidth > 0 && self.innerWidth < sw_min) sw_min = self.innerWidth;
+                if (self.innerHeight > 0 && self.innerHeight < sh_min) sh_min = self.innerHeight;
+            }
+            if (document.body.clientWidth) {
+                if (document.body.clientWidth > 0 && document.body.clientWidth < sw_min) sw_min = document.body.clientWidth;
+                if (document.body.clientHeight > 0 && document.body.clientHeight < sh_min) sh_min = document.body.clientHeight;
+            }
+            if (sw_min == 999999 || sh_min == 999999) {
+                sw_min = 800;
+                sh_min = 600;
+            }
+            swide = sw_min;
+            shigh = sh_min;
+        }
+
+        window.onscroll = set_scroll;
+        function set_scroll() {
+            if (typeof (self.pageYOffset) == 'number') {
+                sdown = self.pageYOffset;
+                sleft = self.pageXOffset;
+            }
+            else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+                sdown = document.body.scrollTop;
+                sleft = document.body.scrollLeft;
+            }
+            else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+                sleft = document.documentElement.scrollLeft;
+                sdown = document.documentElement.scrollTop;
+            }
+            else {
+                sdown = 0;
+                sleft = 0;
+            }
+        }
+
+        function createDiv(height, width) {
+            var div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.height = height;
+            div.style.width = width;
+            div.style.overflow = "hidden";
+            div.style.backgroundColor = "transparent";
+            return (div);
+        }
+        // ]]>
+    </script>
+    <style>
+        :root {
+            --bodyBg: #fdf8e1;
+            --color: #aa1111;
+            --hoverColor: #6a7934;
+            --buttonColor: #e2e4d7;
+            --cardBg: #efb7bf;
+            --cardBg2: #b7d4ef;
+            --cardBg3: #c5efb7;
+            --cardBg4: #efdfb7;
+        }
+
+        @font-face {
+            font-family: "KiwiSoda";
+            src: url(../fonts/KiwiSoda.ttf);
+        }
+
+        @font-face {
+            font-family: "lovelyBubbles";
+            src: url(../fonts/lovelyBubbles.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bodyBg);
+            color: var(--color);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 96%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 20px 0;
+        }
+
+        nav {
+            font-family: KiwiSoda;
+            font-size: xx-large;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto 1fr 1fr;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            color: var(--color);
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            transition: 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--buttonColor);
+            color: var(--hoverColor);
+        }
+
+        .logo-link {
+            justify-self: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo-link img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: spin 2s linear infinite;
+        }
+
+        .logo-link img:hover {
+            animation-play-state: paused;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: var(--color);
+            border-radius: 3px;
+        }
+
+        main {
+            font-family: "lovelyBubbles";
+            padding-bottom: 60px;
+        }
+
+        h1.section-title {
+            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            text-align: center;
+            padding: 20px 0 10px;
+        }
+
+        .item-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 24px;
+            padding: 20px;
+        }
+
+        .food-card {
+            border-radius: 22px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-card:nth-child(4n+1) {
+            background: var(--cardBg);
+        }
+
+        .food-card:nth-child(4n+2) {
+            background: var(--cardBg2);
+        }
+
+        .food-card:nth-child(4n+3) {
+            background: var(--cardBg3);
+        }
+
+        .food-card:nth-child(4n+4) {
+            background: var(--cardBg4);
+        }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .food-card img {
+            padding: 30px;
+            height: 200px;
+            object-fit: cover;
+            margin: 8px auto 0;
+            display: block;
+            border-radius: 14px;
+        }
+
+        .food-card h3 {
+            padding: 14px;
+            text-align: center;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: #333;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(170, 17, 17, 0.18);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .food-modal {
+            width: min(95%, 680px);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--bodyBg);
+            border-radius: 28px;
+            padding: 30px;
+            position: relative;
+            text-align: center;
+            animation: popIn 0.25s ease;
+            border: 3px solid var(--cardBg);
+            font-family: "lovelyBubbles";
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .food-modal img {
+            width: calc(100% - 16px);
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 18px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .food-modal h2 {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            color: var(--color);
+            margin-bottom: 18px;
+        }
+
+        .nutrition {
+            margin: 18px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .nutrition-item {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 10px;
+            border: 2px solid var(--buttonColor);
+        }
+
+        .nutrition-item .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--hoverColor);
+            margin-bottom: 6px;
+        }
+
+        .nutrition-item .value {
+            font-size: 1.3rem;
+            color: var(--color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 10px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-family: "lovelyBubbles";
+            font-size: 1.1rem;
+            transition: filter 0.2s, transform 0.15s;
+        }
+
+        .modal-buttons button:hover {
+            filter: brightness(0.92);
+            transform: scale(1.03);
+        }
+
+        #addCart {
+            background: var(--cardBg2);
+            color: #1a4a7a;
+        }
+
+        #buyNow {
+            background: var(--hoverColor);
+            color: #fff;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--color);
+            line-height: 1;
+            border: none;
+            background: none;
+            transition: opacity 0.2s;
+        }
+
+        .close-btn:hover {
+            opacity: 0.6;
+        }
+
+        @media (max-width: 760px) {
+            nav {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            nav>.nav-btn {
+                display: none;
+                width: 100%;
+                text-align: center;
+            }
+
+            nav>.nav-btn.open {
+                display: block;
+            }
+
+            .logo-link {
+                order: -1;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .item-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+                padding: 12px;
+            }
+
+            .food-card img {
+                height: 150px;
+                width: calc(100% - 12px);
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 340px) {
+            .item-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <nav id="mainNav">
+                <a href="../other HTML pages/order.html" class="nav-btn">Order</a>
+                <a href="../other HTML pages/ideology.html" class="nav-btn">Brand Ideology</a>
+
+                <a href="../index.html" class="logo-link">
+                    <img src="../imgs/logo.png" alt="The Food Depot Logo">
+                </a>
+
+                <a href="../other HTML pages/map.html" class="nav-btn">Physical Resources</a>
+                <a href="../other HTML pages/signIn.html" class="nav-btn">Sign In / Create Account</a>
+
+                <button class="hamburger" id="hamburger" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </nav>
+        </header>
+
+        <main>
+            <h1 class="section-title">Items of the day</h1>
+            <div class="item-cards" id="item-cards"></div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+        <div class="food-modal">
+            <button class="close-btn" id="closeModal" aria-label="Close">✕</button>
+            <img id="modalImg" src="" alt="">
+            <h2 id="modalName"></h2>
+            <div class="nutrition">
+                <div class="nutrition-item">
+                    <div class="label">Calories</div>
+                    <div class="value" id="modalCalories"></div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="label">Protein</div>
+                    <div class="value" id="modalProtein"></div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="label">Carbs</div>
+                    <div class="value" id="modalCarbs"></div>
+                </div>
+                <div class="nutrition-item">
+                    <div class="label">Fat</div>
+                    <div class="value" id="modalFat"></div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="addCart">Add to Cart</button>
+                <button id="buyNow">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const foods = [
+            { name: "Apples", image: "../imgs/apples.png", calories: 95, protein: "0.5g", carbs: "25g", fat: "0.3g" },
+            { name: "Bread", image: "../imgs/bread.png", calories: 120, protein: "4g", carbs: "22g", fat: "1g" },
+            { name: "Milk", image: "../imgs/milk.png", calories: 150, protein: "8g", carbs: "12g", fat: "8g" },
+            { name: "Bananas", image: "../imgs/bananas.png", calories: 105, protein: "1.3g", carbs: "27g", fat: "0.4g" },
+            { name: "Oranges", image: "../imgs/oranges.png", calories: 62, protein: "1.2g", carbs: "15g", fat: "0.2g" },
+            { name: "Eggs", image: "../imgs/eggs.png", calories: 78, protein: "6g", carbs: "0.6g", fat: "5g" },
+            { name: "Yogurt", image: "../imgs/yogurt.png", calories: 100, protein: "9g", carbs: "11g", fat: "2.5g" },
+            { name: "Carrots", image: "../imgs/carrots.webp", calories: 41, protein: "0.9g", carbs: "10g", fat: "0.2g" },
+            { name: "Sugar", image: "../imgs/sugar.png", calories: 6810, protein: "0g", carbs: "8g", fat: "0g" },
+            { name: "Instant Coffee", image: "../imgs/coffee.png", calories: 5, protein: "0.2g", carbs: "2g", fat: "0g" }
+        ];
+
+        const container = document.getElementById("item-cards");
+
+        foods.forEach(food => {
+            const card = document.createElement("div");
+            card.classList.add("food-card");
+            card.innerHTML = `<img src="${food.image}" alt="${food.name}" loading="lazy"><h3>${food.name}</h3>`;
+            card.addEventListener("click", () => openModal(food));
+            container.appendChild(card);
+        });
+
+        function openModal(food) {
+            document.getElementById("modalImg").src = food.image;
+            document.getElementById("modalImg").alt = food.name;
+            document.getElementById("modalName").textContent = food.name;
+            document.getElementById("modalCalories").textContent = food.calories + " kcal";
+            document.getElementById("modalProtein").textContent = food.protein;
+            document.getElementById("modalCarbs").textContent = food.carbs;
+            document.getElementById("modalFat").textContent = food.fat;
+            document.getElementById("modal").classList.add("open");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.remove("open");
+            document.body.style.overflow = "";
+        }
+
+        document.getElementById("closeModal").addEventListener("click", closeModal);
+        document.getElementById("modal").addEventListener("click", e => {
+            if (e.target.id === "modal") closeModal();
+        });
+        document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+        document.getElementById("addCart").addEventListener("click", () => alert("Added to cart!"));
+        document.getElementById("buyNow").addEventListener("click", () => alert("Proceeding to checkout!"));
+
+        const hamburger = document.getElementById("hamburger");
+        const navBtns = document.querySelectorAll("#mainNav > .nav-btn");
+
+        hamburger.addEventListener("click", () => {
+            navBtns.forEach(btn => btn.classList.toggle("open"));
+        });
+    </script>
+</body>
+
+</html>

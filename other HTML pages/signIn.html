@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Food Depot</title>
+  <link rel="icon" href="imgs/logo.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="text/javascript">
+    // <![CDATA[
+    var colours = new Array("#a6f", "#60f", "#60f", "#a6f", "#ccc");
+    var bubbles = 200;
+    var over_or_under = "over";
+
+    /****************************
+    * JavaScript Bubble Cursor  *
+    *(c)2010-13 mf2fm web-design*
+    *  http://www.mf2fm.com/rv  *
+    * DON'T EDIT BELOW THIS BOX *
+    ****************************/
+    var x = ox = 400;
+    var y = oy = 300;
+    var swide = 800;
+    var shigh = 600;
+    var sleft = sdown = 0;
+    var bubb = new Array();
+    var bubbx = new Array();
+    var bubby = new Array();
+    var bubbs = new Array();
+    var sploosh = false;
+
+    function addLoadEvent(funky) {
+      var oldonload = window.onload;
+      if (typeof (oldonload) != 'function') window.onload = funky;
+      else window.onload = function () {
+        if (oldonload) oldonload();
+        funky();
+      }
+    }
+
+    addLoadEvent(buble);
+
+    function buble() {
+      if (document.getElementById) {
+        var i, rats, div;
+        for (i = 0; i < bubbles; i++) {
+          rats = createDiv("3px", "3px");
+          rats.style.visibility = "hidden";
+          rats.style.zIndex = (over_or_under == "over") ? "1001" : "0";
+
+          div = createDiv("auto", "auto");
+          rats.appendChild(div);
+          div = div.style;
+          div.top = "1px";
+          div.left = "0px";
+          div.bottom = "1px";
+          div.right = "0px";
+          div.borderLeft = "1px solid " + colours[3];
+          div.borderRight = "1px solid " + colours[1];
+
+          div = createDiv("auto", "auto");
+          rats.appendChild(div);
+          div = div.style;
+          div.top = "0px";
+          div.left = "1px";
+          div.right = "1px";
+          div.bottom = "0px";
+          div.borderTop = "1px solid " + colours[0];
+          div.borderBottom = "1px solid " + colours[2];
+
+          div = createDiv("auto", "auto");
+          rats.appendChild(div);
+          div = div.style;
+          div.left = "1px";
+          div.right = "1px";
+          div.bottom = "1px";
+          div.top = "1px";
+          div.backgroundColor = colours[4];
+          if (navigator.appName == "Microsoft Internet Explorer") div.filter = "alpha(opacity=50)";
+          else div.opacity = 0.5;
+          document.body.appendChild(rats);
+          bubb[i] = rats.style;
+        }
+        set_scroll();
+        set_width();
+        bubble();
+      }
+    }
+
+    function bubble() {
+      var c;
+      if (Math.abs(x - ox) > 1 || Math.abs(y - oy) > 1) {
+        ox = x;
+        oy = y;
+        for (c = 0; c < bubbles; c++) if (!bubby[c]) {
+          bubb[c].left = (bubbx[c] = x) + "px";
+          bubb[c].top = (bubby[c] = y - 3) + "px";
+          bubb[c].width = "3px";
+          bubb[c].height = "3px";
+          bubb[c].visibility = "visible";
+          bubbs[c] = 3;
+          break;
+        }
+      }
+      for (c = 0; c < bubbles; c++) if (bubby[c]) update_bubb(c);
+      setTimeout("bubble()", 40);
+    }
+
+    document.onmousedown = splash;
+    document.onmouseup = function () { clearTimeout(sploosh); };
+
+    function splash() {
+      ox = -1;
+      oy = -1;
+      sploosh = setTimeout('splash()', 100);
+    }
+
+    function update_bubb(i) {
+      if (bubby[i]) {
+        bubby[i] -= bubbs[i] / 2 + i % 2;
+        bubbx[i] += (i % 5 - 2) / 5;
+        if (bubby[i] > sdown && bubbx[i] > sleft && bubbx[i] < sleft + swide + bubbs[i]) {
+          if (Math.random() < bubbs[i] / shigh * 2 && bubbs[i]++ < 8) {
+            bubb[i].width = bubbs[i] + "px";
+            bubb[i].height = bubbs[i] + "px";
+          }
+          bubb[i].top = bubby[i] + "px";
+          bubb[i].left = bubbx[i] + "px";
+        }
+        else {
+          bubb[i].visibility = "hidden";
+          bubby[i] = 0;
+          return;
+        }
+      }
+    }
+
+    document.onmousemove = mouse;
+    function mouse(e) {
+      if (e) {
+        y = e.pageY;
+        x = e.pageX;
+      }
+      else {
+        set_scroll();
+        y = event.y + sdown;
+        x = event.x + sleft;
+      }
+    }
+
+    window.onresize = set_width;
+    function set_width() {
+      var sw_min = 999999;
+      var sh_min = 999999;
+      if (document.documentElement && document.documentElement.clientWidth) {
+        if (document.documentElement.clientWidth > 0) sw_min = document.documentElement.clientWidth;
+        if (document.documentElement.clientHeight > 0) sh_min = document.documentElement.clientHeight;
+      }
+      if (typeof (self.innerWidth) == 'number' && self.innerWidth) {
+        if (self.innerWidth > 0 && self.innerWidth < sw_min) sw_min = self.innerWidth;
+        if (self.innerHeight > 0 && self.innerHeight < sh_min) sh_min = self.innerHeight;
+      }
+      if (document.body.clientWidth) {
+        if (document.body.clientWidth > 0 && document.body.clientWidth < sw_min) sw_min = document.body.clientWidth;
+        if (document.body.clientHeight > 0 && document.body.clientHeight < sh_min) sh_min = document.body.clientHeight;
+      }
+      if (sw_min == 999999 || sh_min == 999999) {
+        sw_min = 800;
+        sh_min = 600;
+      }
+      swide = sw_min;
+      shigh = sh_min;
+    }
+
+    window.onscroll = set_scroll;
+    function set_scroll() {
+      if (typeof (self.pageYOffset) == 'number') {
+        sdown = self.pageYOffset;
+        sleft = self.pageXOffset;
+      }
+      else if (document.body && (document.body.scrollTop || document.body.scrollLeft)) {
+        sdown = document.body.scrollTop;
+        sleft = document.body.scrollLeft;
+      }
+      else if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
+        sleft = document.documentElement.scrollLeft;
+        sdown = document.documentElement.scrollTop;
+      }
+      else {
+        sdown = 0;
+        sleft = 0;
+      }
+    }
+
+    function createDiv(height, width) {
+      var div = document.createElement("div");
+      div.style.position = "absolute";
+      div.style.height = height;
+      div.style.width = width;
+      div.style.overflow = "hidden";
+      div.style.backgroundColor = "transparent";
+      return (div);
+    }
+    // ]]>
+  </script>
+  <script>
+    function submitForm() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const number = document.getElementById("number").value.trim();
+      const feedback = document.getElementById("feedback").value.trim();
+
+      const selectedRating = document.querySelector('input[name="rating"]:checked');
+      const rating = selectedRating ? selectedRating.value : "";
+
+      let valid = true;
+
+      document.querySelectorAll(".field-error").forEach(error => error.classList.remove("show"));
+
+      if (name === "") {
+        document.getElementById("nameError").classList.add("show");
+        valid = false;
+      }
+
+      if (email === "") {
+        document.getElementById("emailError").classList.add("show");
+        valid = false;
+      }
+
+      if (number === "") {
+        document.getElementById("numberError").classList.add("show");
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      const feedbackData = {
+        name: name,
+        email: email,
+        phone: number,
+        rating: rating,
+        feedback: feedback,
+        date: new Date().toLocaleString()
+      };
+
+      // Safe localStorage save with error handling
+      try {
+        let allFeedback = [];
+        const existing = localStorage.getItem("foodDepotFeedback");
+        if (existing) {
+          const parsed = JSON.parse(existing);
+          allFeedback = Array.isArray(parsed) ? parsed : [];
+        }
+        allFeedback.push(feedbackData);
+        localStorage.setItem("foodDepotFeedback", JSON.stringify(allFeedback));
+      } catch (err) {
+        console.warn("Could not save to localStorage:", err);
+      }
+
+      showToast("✓ Feedback Submitted!");
+
+      // Reset form
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("number").value = "";
+      document.getElementById("feedback").value = "";
+      document.querySelectorAll('input[name="rating"]').forEach(radio => {
+        radio.checked = false;
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+  </script>
+  <style>
+    :root {
+      --bodyBg: #fdf8e1;
+      --color: #aa1111;
+      --hoverColor: #6a7934;
+      --buttonColor: #e2e4d7;
+      --cardBg: #d5e597;
+    }
+
+    @font-face {
+      font-family: "KiwiSoda";
+      src: url(../fonts/KiwiSoda.ttf);
+    }
+
+    @font-face {
+      font-family: "lovelyBubbles";
+      src: url(../fonts/lovelyBubbles.ttf);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bodyBg);
+      font-family: KiwiSoda, Arial, Helvetica, sans-serif;
+      color: var(--color);
+      font-size: xx-large;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 20px 0;
+    }
+
+    nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto 1fr 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      text-align: center;
+      color: var(--color);
+      padding: 12px;
+      border-radius: 10px;
+      transition: .3s;
+    }
+
+    .nav-btn:hover {
+      background: var(--buttonColor);
+      color: var(--hoverColor);
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .logo-link img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      animation: spin 2s linear infinite;
+    }
+
+    .logo-link img:hover {
+      animation-play-state: paused;
+    }
+
+    .page-title {
+      font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
+      text-align: center;
+      margin: 20px 0 40px;
+    }
+
+    .page-title h1 {
+      font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
+      color: var(--color);
+      font-size: 2.5rem;
+    }
+
+    .page-title p {
+      margin-top: 10px;
+    }
+
+    .form-section {
+      font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 700px;
+      background: var(--cardBg);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--color);
+      font-weight: bold;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--buttonColor);
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--hoverColor);
+    }
+
+    .field-error {
+      color: #aa1111;
+      font-size: .85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    .stars {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+
+    .stars input {
+      display: none;
+    }
+
+    .stars label {
+      font-size: 2rem;
+      color: #bbb;
+      cursor: pointer;
+    }
+
+    .stars label:hover,
+    .stars label:hover~label,
+    .stars input:checked~label {
+      color: gold;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: var(--buttonColor);
+      color: var(--color);
+      font-weight: bold;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .btn:hover {
+      background: var(--hoverColor);
+      color: white;
+    }
+
+    .divider {
+      margin: 25px 0;
+      border: none;
+      border-top: 2px solid rgba(0, 0, 0, .1);
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      background: var(--hoverColor);
+      color: #fdf8e1;
+
+      font-family: lovelyBubbles, Arial, Helvetica, sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.25);
+
+      box-shadow:
+        0 8px 24px rgba(106, 121, 52, 0.45),
+        0 2px 6px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition:
+        opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      white-space: nowrap;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-link {
+        order: -1;
+      }
+
+      .card {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <nav>
+        <a href="../other HTML pages/order.html" class="nav-btn">Order</a>
+        <a href="../other HTML pages/ideology.html" class="nav-btn">Brand Ideology</a>
+        <a href="../index.html" class="logo-link">
+          <img src="../imgs/logo.png" alt="The Food Depot Logo">
+        </a>
+        <a href="../other HTML pages/map.html" class="nav-btn">Physical Resources</a>
+        <a href="../other HTML pages/signIn.html" class="nav-btn">Sign In / Create Account</a>
+      </nav>
+    </header>
+
+    <main>
+
+      <section class="page-title">
+        <h1>Sign in</h1>
+        <p>Sign in and leave your feedback!</p>
+      </section>
+
+      <section class="form-section">
+        <div class="card">
+
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Your Name">
+            <div class="field-error" id="nameError">Please enter your name.</div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="yourname@example.com">
+            <div class="field-error" id="emailError">Please enter a valid email.</div>
+          </div>
+
+          <div class="field">
+            <label for="number">Phone Number</label>
+            <input type="tel" id="number" placeholder="(123) 456-7890">
+            <div class="field-error" id="numberError">Please enter a phone number.</div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="field">
+            <label>Rate Your Experience</label>
+            <div class="stars">
+              <input type="radio" id="s5" name="rating" value="5">
+              <label for="s5">★</label>
+              <input type="radio" id="s4" name="rating" value="4">
+              <label for="s4">★</label>
+              <input type="radio" id="s3" name="rating" value="3">
+              <label for="s3">★</label>
+              <input type="radio" id="s2" name="rating" value="2">
+              <label for="s2">★</label>
+              <input type="radio" id="s1" name="rating" value="1">
+              <label for="s1">★</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="feedback">Additional Feedback</label>
+            <textarea id="feedback" placeholder="Tell us about your experience..."></textarea>
+          </div>
+
+          <button class="btn" onclick="submitForm()">Submit Feedback</button>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</body>
+</html>
